@@ -84,7 +84,7 @@ MSGCOPTS= $(INCLUDE_PATH)
 SUBDIRS= 
 
 # object files in this directory
-OBJS= node_n.o NodeHandshakeMessage_m.o nodeMessage_m.o peerMessage_m.o node.o   
+OBJS= ConnectionManager_n.o DataManager_n.o NodeManager_n.o Node_n.o NodeNet_n.o Switch_n.o NodeHandshakeMessage_m.o nodeMessage_m.o peerMessage_m.o node.o
 
 # header files generated (from msg files)
 GENERATEDHEADERS= NodeHandshakeMessage_m.h nodeMessage_m.h peerMessage_m.h
@@ -105,11 +105,41 @@ purify: $(OBJS) $(EXTRA_OBJS) $(EXT_DIR_TSTAMPS) Makefile
 
 subdirs: $(SUBDIRS)
 
-node_n.o: node_n.cc
-	$(CXX) -c $(NEDCOPTS) node_n.cc
+ConnectionManager_n.o: ConnectionManager_n.cc
+	$(CXX) -c $(NEDCOPTS) ConnectionManager_n.cc
 
-node_n.cc: node.ned
-	$(NEDC) $(INCLUDE_PATH) node.ned
+ConnectionManager_n.cc: ConnectionManager.ned
+	$(NEDC) $(INCLUDE_PATH) ConnectionManager.ned
+
+DataManager_n.o: DataManager_n.cc
+	$(CXX) -c $(NEDCOPTS) DataManager_n.cc
+
+DataManager_n.cc: DataManager.ned
+	$(NEDC) $(INCLUDE_PATH) DataManager.ned
+
+NodeManager_n.o: NodeManager_n.cc
+	$(CXX) -c $(NEDCOPTS) NodeManager_n.cc
+
+NodeManager_n.cc: NodeManager.ned
+	$(NEDC) $(INCLUDE_PATH) NodeManager.ned
+
+Node_n.o: Node_n.cc
+	$(CXX) -c $(NEDCOPTS) Node_n.cc
+
+Node_n.cc: Node.ned
+	$(NEDC) $(INCLUDE_PATH) Node.ned
+
+NodeNet_n.o: NodeNet_n.cc
+	$(CXX) -c $(NEDCOPTS) NodeNet_n.cc
+
+NodeNet_n.cc: NodeNet.ned
+	$(NEDC) $(INCLUDE_PATH) NodeNet.ned
+
+Switch_n.o: Switch_n.cc
+	$(CXX) -c $(NEDCOPTS) Switch_n.cc
+
+Switch_n.cc: Switch.ned
+	$(NEDC) $(INCLUDE_PATH) Switch.ned
 
 NodeHandshakeMessage_m.o: NodeHandshakeMessage_m.cc
 	$(CXX) -c $(NEDCOPTS) NodeHandshakeMessage_m.cc
@@ -173,16 +203,4 @@ re-makemake-m: makefile-ins
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 node.o: node.cc \
   connection.h \
-  NodeHandshakeMessage_m.h \
-  commons.h \
-  PeersHandshake.h \
-  nodeMessage_m.h
-NodeHandshakeMessage_m.o: NodeHandshakeMessage_m.cc \
-  NodeHandshakeMessage_m.h \
-  PeersHandshake.h \
-  nodeMessage_m.h
-nodeMessage_m.o: nodeMessage_m.cc \
-  nodeMessage_m.h
-peerMessage_m.o: peerMessage_m.cc \
-  peerMessage_m.h \
-  nodeMessage_m.h
+  commons.h
