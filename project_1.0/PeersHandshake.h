@@ -1,8 +1,6 @@
 #ifndef PEERSHANDSHAKE_H_
 #define PEERSHANDSHAKE_H_
 
-#endif /*PEERSHANDSHAKE_H_*/
-
 #include <iostream.h>
 #include <string.h>
 
@@ -45,3 +43,5 @@ class PeersHandshake
 			pstrlen = 19;
 		}
 };
+
+#endif /*PEERSHANDSHAKE_H_*/

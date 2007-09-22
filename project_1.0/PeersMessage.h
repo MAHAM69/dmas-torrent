@@ -1,8 +1,6 @@
 #ifndef PEERSMESSAGE_H_
 #define PEERSMESSAGE_H_
 
-#endif /*PEERSMESSAGE_H_*/
-
 class PeersMessage
 {
 	public:
@@ -13,3 +11,5 @@ class PeersMessage
 		unsigned char messageId;		
 		
 };
+
+#endif /*PEERSMESSAGE_H_*/
