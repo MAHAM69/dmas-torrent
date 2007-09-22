@@ -213,7 +213,7 @@ void ConnectionManager::handleHandshake(NodeHandshakeMessage* myHandshakeMsg)
 {
 	
 	// if message is peer handshake, add it to list of connections				
-	PeersConnected newConnection( myHandshakeMsg->getHandshake().peerId );
+	PeersConnected newConnection( myHandshakeMsg->getHandshake().getPeerId() );
 	
 	connectionsList.push_back(newConnection);
 						
@@ -231,15 +231,15 @@ void ConnectionManager::handleHandshake(NodeHandshakeMessage* myHandshakeMsg)
 	
 	char bubel[100]; 
 	strcpy(bubel, "handshake received from\n");
-	strcat(bubel, myHandshakeMsg->getHandshake().peerId);
+	strcat(bubel, myHandshakeMsg->getHandshake().getPeerId());
 	
 	bubble(bubel);
 	
-	ev << peerName << " handshake message received from " <<  myHandshakeMsg->getHandshake().peerId << "\n";					
+	ev << peerName << " handshake message received from " <<  myHandshakeMsg->getHandshake().getPeerId() << "\n";
 	
 	// respond to handshake message - create own handshake message and send it to sender of a handshake
 	NodeHandshakeMessage* handshakeResponse = 
-		generateHandshake("info_hash", peerName, myHandshakeMsg->getHandshake().peerId, true);
+		generateHandshake("info_hash", peerName, myHandshakeMsg->getHandshake().getPeerId(), true);
 	
 	send(handshakeResponse,"nodeOut");
 	
