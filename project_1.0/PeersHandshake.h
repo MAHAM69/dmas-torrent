@@ -1,8 +1,8 @@
 #ifndef PEERSHANDSHAKE_H_
 #define PEERSHANDSHAKE_H_
 
-#include <iostream.h>
-#include <string.h>
+#include <iostream>
+#include <string>
 
 // class for storing handshake message between 2 peers
 // see bitTorrent protocol specification on Wiki for reference
