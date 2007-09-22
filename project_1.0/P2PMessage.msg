@@ -1,7 +1,7 @@
 // message sent by peers
 
 cplusplus {{
-#include "nodeMessage_m.h"
+#include "NodeMessage_m.h"
 }};
 
 class NodeMessage;

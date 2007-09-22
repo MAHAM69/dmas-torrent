@@ -84,10 +84,10 @@ MSGCOPTS= $(INCLUDE_PATH)
 SUBDIRS= 
 
 # object files in this directory
-OBJS= ConnectionManager_n.o DataManager_n.o NodeManager_n.o Node_n.o NodeNet_n.o Switch_n.o NodeHandshakeMessage_m.o nodeMessage_m.o peerMessage_m.o node.o PeersHandshake.o PeersMessage.o
+OBJS= ConnectionManager_n.o DataManager_n.o NodeManager_n.o Node_n.o NodeNet_n.o Switch_n.o NodeHandshakeMessage_m.o NodeMessage_m.o P2PMessage_m.o ConnectionManager.o DataManager.o HandshakeGenerator.o NodeAddress.o Node.o NodeManager.o PeersHandshake.o PeersMessage.o Switch.o
 
 # header files generated (from msg files)
-GENERATEDHEADERS= NodeHandshakeMessage_m.h nodeMessage_m.h peerMessage_m.h
+GENERATEDHEADERS= NodeHandshakeMessage_m.h NodeMessage_m.h P2PMessage_m.h
 
 #------------------------------------------------------------------------------
 
@@ -147,26 +147,44 @@ NodeHandshakeMessage_m.o: NodeHandshakeMessage_m.cc
 NodeHandshakeMessage_m.cc NodeHandshakeMessage_m.h: NodeHandshakeMessage.msg
 	$(MSGC) $(MSGCOPTS) NodeHandshakeMessage.msg
 
-nodeMessage_m.o: nodeMessage_m.cc
-	$(CXX) -c $(NEDCOPTS) nodeMessage_m.cc
+NodeMessage_m.o: NodeMessage_m.cc
+	$(CXX) -c $(NEDCOPTS) NodeMessage_m.cc
 
-nodeMessage_m.cc nodeMessage_m.h: nodeMessage.msg
-	$(MSGC) $(MSGCOPTS) nodeMessage.msg
+NodeMessage_m.cc NodeMessage_m.h: NodeMessage.msg
+	$(MSGC) $(MSGCOPTS) NodeMessage.msg
 
-peerMessage_m.o: peerMessage_m.cc
-	$(CXX) -c $(NEDCOPTS) peerMessage_m.cc
+P2PMessage_m.o: P2PMessage_m.cc
+	$(CXX) -c $(NEDCOPTS) P2PMessage_m.cc
 
-peerMessage_m.cc peerMessage_m.h: peerMessage.msg
-	$(MSGC) $(MSGCOPTS) peerMessage.msg
+P2PMessage_m.cc P2PMessage_m.h: P2PMessage.msg
+	$(MSGC) $(MSGCOPTS) P2PMessage.msg
 
-node.o: node.cc
-	$(CXX) -c $(COPTS) node.cc
+ConnectionManager.o: ConnectionManager.cc
+	$(CXX) -c $(COPTS) ConnectionManager.cc
+
+DataManager.o: DataManager.cc
+	$(CXX) -c $(COPTS) DataManager.cc
+
+HandshakeGenerator.o: HandshakeGenerator.cc
+	$(CXX) -c $(COPTS) HandshakeGenerator.cc
+
+NodeAddress.o: NodeAddress.cc
+	$(CXX) -c $(COPTS) NodeAddress.cc
+
+Node.o: Node.cc
+	$(CXX) -c $(COPTS) Node.cc
+
+NodeManager.o: NodeManager.cc
+	$(CXX) -c $(COPTS) NodeManager.cc
 
 PeersHandshake.o: PeersHandshake.cc
 	$(CXX) -c $(COPTS) PeersHandshake.cc
 
 PeersMessage.o: PeersMessage.cc
 	$(CXX) -c $(COPTS) PeersMessage.cc
+
+Switch.o: Switch.cc
+	$(CXX) -c $(COPTS) Switch.cc
 
 
 #doc: neddoc doxy
@@ -207,10 +225,41 @@ re-makemake-m: makefile-ins
 
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
-node.o: node.cc \
+ConnectionManager.o: ConnectionManager.cc \
+  ConnectionManager.h \
+  HandshakeGenerator.h \
+  connection.h \
+  commons.h
+DataManager.o: DataManager.cc \
+  DataManager.h \
+  connection.h \
+  commons.h
+HandshakeGenerator.o: HandshakeGenerator.cc \
+  HandshakeGenerator.h \
+  connection.h \
+  commons.h
+NodeAddress.o: NodeAddress.cc \
+  NodeAddress.h
+Node.o: Node.cc \
+  NodeManager.h \
+  ConnectionManager.h \
+  DataManager.h \
+  Switch.h \
+  HandshakeGenerator.h \
+  connection.h \
+  commons.h \
+  NodeAddress.h
+NodeManager.o: NodeManager.cc \
+  NodeManager.h \
+  HandshakeGenerator.h \
   connection.h \
   commons.h
 PeersHandshake.o: PeersHandshake.cc \
   PeersHandshake.h
 PeersMessage.o: PeersMessage.cc \
   PeersMessage.h
+Switch.o: Switch.cc \
+  Switch.h \
+  NodeAddress.h \
+  connection.h \
+  commons.h

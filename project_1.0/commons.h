@@ -1,3 +1,5 @@
+#ifndef COMMONS_H_
+#define COMMONS_H_
 
 // constants used as addresses in internal node communication
 static const unsigned int NODE_MANAGER = 0;
@@ -17,30 +19,4 @@ static const unsigned int NODE_2 = 2;
 static const unsigned int NODE_3 = 3;
 static const unsigned int NODE_4 = 4;
 
-// should be a hash table (stl map<>) for retrieving addresses of nodes in a network
-// returns sitch\s gate for certain node-name 
-int nodeAddress(const char* nodeName)
-{
-	if( !strcmp("node1",nodeName) )
-	{
-		return 0;
-	}
-	
-	else if( !strcmp("node2",nodeName) )
-	{
-		return 1;
-	}
-	else if( !strcmp("node3",nodeName) )
-	{
-		return 2;
-	}
-	else if( !strcmp("node4",nodeName) )
-	{
-		return 3;
-	}
-	else 
-		return -1;
-}
-
-
-
+#endif /*COMMONS_H*/
