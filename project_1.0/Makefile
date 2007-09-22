@@ -84,7 +84,7 @@ MSGCOPTS= $(INCLUDE_PATH)
 SUBDIRS= 
 
 # object files in this directory
-OBJS= ConnectionManager_n.o DataManager_n.o NodeManager_n.o Node_n.o NodeNet_n.o Switch_n.o NodeHandshakeMessage_m.o NodeMessage_m.o P2PMessage_m.o ConnectionManager.o DataManager.o HandshakeGenerator.o NodeAddress.o Node.o NodeManager.o PeersHandshake.o PeersMessage.o Switch.o
+OBJS= ConnectionManager_n.o DataManager_n.o NodeManager_n.o Node_n.o NodeNet_n.o Switch_n.o NodeHandshakeMessage_m.o NodeMessage_m.o P2PMessage_m.o ActiveConnections.o ConnectionManager.o DataManager.o HandshakeGenerator.o NodeAddress.o Node.o NodeManager.o PeersConnected.o PeersHandshake.o PeersMessage.o SingleActive.o Switch.o
 
 # header files generated (from msg files)
 GENERATEDHEADERS= NodeHandshakeMessage_m.h NodeMessage_m.h P2PMessage_m.h
@@ -159,6 +159,9 @@ P2PMessage_m.o: P2PMessage_m.cc
 P2PMessage_m.cc P2PMessage_m.h: P2PMessage.msg
 	$(MSGC) $(MSGCOPTS) P2PMessage.msg
 
+ActiveConnections.o: ActiveConnections.cc
+	$(CXX) -c $(COPTS) ActiveConnections.cc
+
 ConnectionManager.o: ConnectionManager.cc
 	$(CXX) -c $(COPTS) ConnectionManager.cc
 
@@ -177,11 +180,17 @@ Node.o: Node.cc
 NodeManager.o: NodeManager.cc
 	$(CXX) -c $(COPTS) NodeManager.cc
 
+PeersConnected.o: PeersConnected.cc
+	$(CXX) -c $(COPTS) PeersConnected.cc
+
 PeersHandshake.o: PeersHandshake.cc
 	$(CXX) -c $(COPTS) PeersHandshake.cc
 
 PeersMessage.o: PeersMessage.cc
 	$(CXX) -c $(COPTS) PeersMessage.cc
+
+SingleActive.o: SingleActive.cc
+	$(CXX) -c $(COPTS) SingleActive.cc
 
 Switch.o: Switch.cc
 	$(CXX) -c $(COPTS) Switch.cc
@@ -225,18 +234,21 @@ re-makemake-m: makefile-ins
 
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
+ActiveConnections.o: ActiveConnections.cc \
+  ActiveConnections.h \
+  SingleActive.h
 ConnectionManager.o: ConnectionManager.cc \
   ConnectionManager.h \
   HandshakeGenerator.h \
-  connection.h \
-  commons.h
+  PeersConnected.h \
+  ActiveConnections.h \
+  commons.h \
+  SingleActive.h
 DataManager.o: DataManager.cc \
   DataManager.h \
-  connection.h \
   commons.h
 HandshakeGenerator.o: HandshakeGenerator.cc \
   HandshakeGenerator.h \
-  connection.h \
   commons.h
 NodeAddress.o: NodeAddress.cc \
   NodeAddress.h
@@ -246,20 +258,24 @@ Node.o: Node.cc \
   DataManager.h \
   Switch.h \
   HandshakeGenerator.h \
-  connection.h \
   commons.h \
+  PeersConnected.h \
+  ActiveConnections.h \
+  SingleActive.h \
   NodeAddress.h
 NodeManager.o: NodeManager.cc \
   NodeManager.h \
   HandshakeGenerator.h \
-  connection.h \
   commons.h
+PeersConnected.o: PeersConnected.cc \
+  PeersConnected.h
 PeersHandshake.o: PeersHandshake.cc \
   PeersHandshake.h
 PeersMessage.o: PeersMessage.cc \
   PeersMessage.h
+SingleActive.o: SingleActive.cc \
+  SingleActive.h
 Switch.o: Switch.cc \
   Switch.h \
   NodeAddress.h \
-  connection.h \
   commons.h
