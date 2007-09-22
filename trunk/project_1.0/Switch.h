@@ -5,8 +5,6 @@
 #include <omnetpp.h>
 #include "NodeMessage_m.h"
 #include "NodeAddress.h"
-
-#include "connection.h"
 #include "commons.h"
 
 using namespace std;

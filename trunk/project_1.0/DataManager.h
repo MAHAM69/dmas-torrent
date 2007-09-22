@@ -4,8 +4,6 @@
 #include <string>
 #include <omnetpp.h>
 #include "NodeMessage_m.h"
-
-#include "connection.h"
 #include "commons.h"
 
 using namespace std;

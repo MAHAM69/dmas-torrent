@@ -4,10 +4,8 @@
 #include <string>
 #include <omnetpp.h>
 #include "HandshakeGenerator.h"
-
 // careful! nodeMessage contains definition of NodeHandshakeMessage; name is misleading
 #include "NodeHandshakeMessage_m.h"
-#include "connection.h"
 #include "commons.h"
 
 using namespace std;
