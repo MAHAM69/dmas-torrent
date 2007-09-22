@@ -1,0 +1,8 @@
+rm project_1.0
+clear
+opp_makemake -f
+make
+rm *_m.h
+rm *_m.cc
+rm *_n.cc
+rm *.o
