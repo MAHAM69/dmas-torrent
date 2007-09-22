@@ -84,7 +84,7 @@ MSGCOPTS= $(INCLUDE_PATH)
 SUBDIRS= 
 
 # object files in this directory
-OBJS= ConnectionManager_n.o DataManager_n.o NodeManager_n.o Node_n.o NodeNet_n.o Switch_n.o NodeHandshakeMessage_m.o nodeMessage_m.o peerMessage_m.o node.o
+OBJS= ConnectionManager_n.o DataManager_n.o NodeManager_n.o Node_n.o NodeNet_n.o Switch_n.o NodeHandshakeMessage_m.o nodeMessage_m.o peerMessage_m.o node.o PeersHandshake.o PeersMessage.o
 
 # header files generated (from msg files)
 GENERATEDHEADERS= NodeHandshakeMessage_m.h nodeMessage_m.h peerMessage_m.h
@@ -162,6 +162,12 @@ peerMessage_m.cc peerMessage_m.h: peerMessage.msg
 node.o: node.cc
 	$(CXX) -c $(COPTS) node.cc
 
+PeersHandshake.o: PeersHandshake.cc
+	$(CXX) -c $(COPTS) PeersHandshake.cc
+
+PeersMessage.o: PeersMessage.cc
+	$(CXX) -c $(COPTS) PeersMessage.cc
+
 
 #doc: neddoc doxy
 
@@ -204,3 +210,7 @@ re-makemake-m: makefile-ins
 node.o: node.cc \
   connection.h \
   commons.h
+PeersHandshake.o: PeersHandshake.cc \
+  PeersHandshake.h
+PeersMessage.o: PeersMessage.cc \
+  PeersMessage.h
