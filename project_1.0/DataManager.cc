@@ -7,7 +7,6 @@ void DataManager::initialize()
 {
 	// initialize randomization	
 	srand((unsigned)time(0) + id()); 
-	
 	connectionEstablished = false;
 	strcpy(peerName, par("peer_name"));
 	// here be receiving number of blocks of torrent from node manager 
@@ -36,7 +35,6 @@ void DataManager::initialize()
 	currentBitfield[blocksNumber] = '\0';
 	
 	requestsStarted = false;
-	
 }
 
 void DataManager::handleMessage(cMessage *msg)
@@ -49,7 +47,7 @@ void DataManager::handleMessage(cMessage *msg)
 		if(!connectionEstablished)
 		{
 			// no message can be processed, if CONNECTION_ESTABLISHED_MESSAGE has not arrived
-			if(myMsg->getType() == CONNECTIONS_ESTABLISHED_MSG ){
+			if(myMsg->getType() == MSG_CONNECTIONS_ESTABLISHED ){
 				// connections with peers were established so set the flag to true and process other messages
 				connectionEstablished = true;				
 				ev << peerName << " data manager understood: connection established with " << myMsg->getDestination() << endl;
@@ -59,14 +57,18 @@ void DataManager::handleMessage(cMessage *msg)
 		else
 		{
 			// connection with peers has been established, messages other than CONNECTIIONS_ESTABLISHED may now be processed
-			if(myMsg->getType() == SELF_BITFIELD_MSG)
+			if(myMsg->getType() == MSG_SELF_BITFIELD)
 			{
 				PeerToPeerMessage* bitfieldMsg = check_and_cast<PeerToPeerMessage*>(myMsg);
+				
+				int alpha = strlen(bitfield);
+				
+				ev << peerName << "bitfield length: " << strlen(bitfield) << endl;
 				
 				generateBitfieldMessage(bitfieldMsg,bitfield);
 				send(bitfieldMsg,"connectionManagerOut");
 			}
-			else if (myMsg->getType() == BITFIELD_MSG || myMsg->getType() == BITFIELD_RESPONSE)
+			else if (myMsg->getType() == MSG_BITFIELD || myMsg->getType() == MSG_BITFIELD_RESPONSE)
 			{
 				
 				PeerToPeerMessage* peerMsg = check_and_cast<PeerToPeerMessage*> (myMsg);
@@ -89,16 +91,16 @@ void DataManager::handleMessage(cMessage *msg)
 					
 					ev << peerName << " data manager successfully added bitfield from " << peerMsg->getSender(); 
 					
-					if(myMsg->getType() == BITFIELD_MSG)
+					if(myMsg->getType() == MSG_BITFIELD)
 						ev << " received bitfield\n";
-					else if (myMsg->getType() == BITFIELD_RESPONSE)
+					else if (myMsg->getType() == MSG_BITFIELD_RESPONSE)
 						ev << " received response for bitfield\n";
 					
 					for(unsigned int i=0; i<blocksNumber;i++)
 						ev << payload[i] << " ";
 					ev << endl;
 					
-					if(peerMsg->getType() == BITFIELD_MSG )
+					if(peerMsg->getType() == MSG_BITFIELD )
 					{
 						// message was bitfield message, so generate response for bitifield message and send  it back
 						PeerToPeerMessage* responseMsg= generateResponseForBitfieldMessage(peerMsg,this->bitfield,peerName);
