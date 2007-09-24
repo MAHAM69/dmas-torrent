@@ -5,8 +5,14 @@ Define_Module(DataManager);
 
 void DataManager::initialize()
 {
+
 	// initialize randomization	
 	srand((unsigned)time(0) + id()); 
+	
+
+	// initialize randomization	
+	srand((unsigned)time(0) + id()); 
+
 	connectionEstablished = false;
 	strcpy(peerName, par("peer_name"));
 	// here be receiving number of blocks of torrent from node manager 
@@ -24,6 +30,19 @@ void DataManager::initialize()
 	}
 	bitfield[blocksNumber] = '\0';	
 	
+	// at first, copy bitfield to the currentBitfield, as -initially-they are the same
+	currentBitfield = new char(blocksNumber +1);
+	
+	for(unsigned int i=0; i < blocksNumber; i++)
+	{
+		currentBitfield[i] = bitfield[i];
+	}
+	
+	currentBitfield[blocksNumber] = '\0';
+	
+	requestsStarted = false;
+	
+
 	// at first, copy bitfield to the currentBitfield, as -initially-they are the same
 	currentBitfield = new char(blocksNumber +1);
 	
@@ -60,10 +79,6 @@ void DataManager::handleMessage(cMessage *msg)
 			if(myMsg->getType() == MSG_SELF_BITFIELD)
 			{
 				PeerToPeerMessage* bitfieldMsg = check_and_cast<PeerToPeerMessage*>(myMsg);
-				
-				int alpha = strlen(bitfield);
-				
-				ev << peerName << "bitfield length: " << strlen(bitfield) << endl;
 				
 				generateBitfieldMessage(bitfieldMsg,bitfield);
 				send(bitfieldMsg,"connectionManagerOut");
@@ -117,6 +132,30 @@ void DataManager::handleMessage(cMessage *msg)
 					}
 				}
 			}
+
+			else if (myMsg->getType() == MSG_START_REQUESTS)
+			{
+				int whichBlock= chooseBlock();
+				
+				//whichBlock==-1 means that no blocks to download left
+				if(whichBlock > -1)
+				{
+					// checking which peer posses the required block
+					
+					
+					// generate request message
+					char* payload=this->requestIntToChar(10,10,10);
+					
+					int* valuesBack = this->requestCharToInt(payload);
+					
+					//testing auxillary functions
+					
+				}
+				
+				// periodically generate requests			
+				//scheduleGenerateRequest();
+			}
+
 			else if (myMsg->getType() == START_REQUESTS)
 			{
 				int whichBlock= chooseBlock();
@@ -133,9 +172,141 @@ void DataManager::handleMessage(cMessage *msg)
 								
 				scheduleGenerateRequest();
 			}
+
 		}
 	}
 }
+
+
+void DataManager::scheduleGenerateRequest()
+{
+	NodeMessage* startRequests = new NodeMessage(); 
+	
+	startRequests->setType(MSG_START_REQUESTS);
+	
+	scheduleAt(simTime() + 10, startRequests);
+}
+
+int DataManager::chooseBlock()
+{
+	// determine in which blocks client is interested
+	char* blocksOfInterest = new char[blocksNumber +1];	
+	
+	for(unsigned int i =0; i < blocksNumber; i++)
+	{
+		blocksOfInterest[i] = 'n';
+	}
+	blocksOfInterest[blocksNumber] = '\0';
+	
+	
+	// for each bitfield among peersBitfields
+	for(unsigned int j =0; j < peersBitfields.size(); j++)
+		// determine which block is available by comparing peers bitfields (so what is available)  
+		// with what client has (currentBitfield), so that it determines 		
+		// which blocks client is really interested in and set blocksOfInterest to yes
+		for(unsigned int l=0; l < blocksNumber; l++)
+		{
+			if( peersBitfields[j].getBitfield()[l] ==  'y' && currentBitfield[l] == 'n')
+				blocksOfInterest[l] = 'y';			
+		}	
+	
+	
+	
+	unsigned int howManyBlocksOfInterest= 0;
+	
+	for(unsigned int i=0;i < blocksNumber; i++)
+	{
+		if(blocksOfInterest[i] == 'y')
+			howManyBlocksOfInterest++;
+	}
+	
+	if(howManyBlocksOfInterest > 0){
+		
+		
+		// choose randomly which block to download
+		int whichBlock = rand() % howManyBlocksOfInterest;
+		
+		// determine number of a block corresponding to the chosen 'whichBlock' 
+		// in an array of blocks
+		unsigned int blockNumber = 0;
+		
+		
+		for(blockNumber=0; blockNumber < blocksNumber && whichBlock >= 0; blockNumber++)
+		{
+			if( blocksOfInterest[blockNumber] == 'y' )
+			{
+				whichBlock--;			
+			}			
+		}
+		
+		blockNumber--;
+		
+		delete []blocksOfInterest;
+		return blockNumber;
+	}
+	else
+	{
+		delete []blocksOfInterest;
+		return -1;
+	}
+	
+}
+
+char* DataManager::requestIntToChar(int blockIndex, int offset, int pieceLength)
+{
+	char payload[12];
+	char buffer[4];
+	string* strBuf;
+	
+	strBuf = & int2str(blockIndex,0);
+	strcpy(buffer,strBuf->c_str());
+	
+	for(int i=0; i <4; i++)
+		payload[i] = buffer[i];
+	
+	strBuf = &int2str(offset,0);
+	strcpy(buffer,strBuf->c_str());
+	
+	for(int i=0; i <4; i++)
+		payload[4+i] = buffer[i];
+	
+	strBuf = &int2str(pieceLength,0);
+	strcpy(buffer,strBuf->c_str());
+	
+	for(int i=0; i <4; i++)
+		payload[8+i] = buffer[i];
+	
+	return payload;
+}
+
+int* DataManager::requestCharToInt(char* payload)
+{
+	int intValues[3];
+	string* strBuf;
+	char buffer[4];
+	
+	for(int i=0;i<4;i++)
+		buffer[i]=payload[i];
+	
+	strBuf = new string(buffer);
+	intValues[0] = str2int(*strBuf);
+	
+	for(int i=0;i<4;i++)
+		buffer[i]=payload[4+i];
+	
+	strBuf = new string(buffer);
+	intValues[1] = str2int(*strBuf);
+	
+	for(int i=0;i<4;i++)
+		buffer[i]=payload[8+i];
+	
+	strBuf = new string(buffer);
+	intValues[2] = str2int(*strBuf);
+	
+	delete strBuf;
+	return intValues;
+}
+
 
 void DataManager::scheduleGenerateRequest()
 {
@@ -231,3 +402,4 @@ int DataManager::chooseBlock()
 	}
 	
 }
+
