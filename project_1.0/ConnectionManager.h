@@ -4,11 +4,12 @@
 #include <string>
 #include <omnetpp.h>
 #include "HandshakeGenerator.h"
-// careful! nodeMessage contains definition of NodeHandshakeMessage; name is misleading
 #include "NodeHandshakeMessage_m.h"
 #include "PeersConnected.h"
 #include "ActiveConnections.h"
 #include "commons.h"
+#include "P2PMessage_m.h"
+#include "PeerMessageGenerator.h"
 
 using namespace std;
 
@@ -16,7 +17,8 @@ using namespace std;
  *
  */
 class ConnectionManager:    public cSimpleModule,
-			    public HandshakeGenerator
+			    public HandshakeGenerator,
+		    	public PeerMessageGenerator
 {
 	private:
 		char peerName[20];
@@ -24,7 +26,7 @@ class ConnectionManager:    public cSimpleModule,
 		// flag determines if DataManager has been notified about established connections
 		// flag is set to true, if connections has been established and it's possible
 		// to send bitfields messages and requests
-		bool notifiedDataManager;
+		bool notifiedDataManager;			
 		
 		// list of peers from which handshake was received and 
 		vector<PeersConnected> connectionsList;
@@ -32,10 +34,14 @@ class ConnectionManager:    public cSimpleModule,
 		// list of active connections		
 		ActiveConnections* activeConnections;
 		
+		
+		void handleHandshake(NodeHandshakeMessage* myHandshakeMsg);
+		void handleHandshakeResponse(NodeHandshakeMessage* myHandshakeMsg);
+		
 	protected:
 		virtual void initialize();
 		virtual void handleMessage(cMessage *msg);
-		void handleHandshake(NodeHandshakeMessage* myHandshakeMsg);
+		
 };
 
 #endif /*CONNECTIONMANAGER_H_*/
