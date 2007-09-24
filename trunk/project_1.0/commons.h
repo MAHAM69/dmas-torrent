@@ -25,4 +25,14 @@ static const unsigned int NODE_2 = 2;
 static const unsigned int NODE_3 = 3;
 static const unsigned int NODE_4 = 4;
 
+//maximal length of peer list in tracker
+const int MAX_PEERS = 100; 
+
+//number of peers sent in tracker's response
+const int NO_PEERS=2;
+
+//interval in seconds that the client should 
+//wait between sending regular requests to tracker
+const double REQ_INTERVAL=100;
+
 #endif /*COMMONS_H*/
