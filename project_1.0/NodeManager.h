@@ -3,8 +3,8 @@
 
 #include <string>
 #include <omnetpp.h>
+#include <iostream>
 #include "HandshakeGenerator.h"
-// careful! nodeMessage contains definition of NodeHandshakeMessage; name is misleading
 #include "NodeHandshakeMessage_m.h"
 #include "commons.h"
 
@@ -20,7 +20,7 @@ class NodeManager : public cSimpleModule,
 	/** peers list received from tracker */
 	//char peersList[10][10];		
 
-	char peerName[20];		
+	char peerName[20];
 		
 	vector<char*> peersList;
 		
