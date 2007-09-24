@@ -47,6 +47,7 @@ class ConnectionManager:    public cSimpleModule,
 		void msgSelfBitField(NodeMessage* myMsg);
 		//void msgBitFieldResponse(NodeMessage* myMsg);
 		void msgInterested(NodeMessage* myMsg);
+		void msgNotInterested(NodeMessage* myMsg);
 		void msgChoked(NodeMessage* myMsg);
 		void msgUnchoked(NodeMessage* myMsg);
 
