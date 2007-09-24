@@ -84,6 +84,48 @@ class DataManager : public cSimpleModule,
      */
     void scheduleGenerateRequest();
     
+    /**
+     * converts three integer to char[12]
+     */ 
+    char* requestIntToChar(int blockIndex, int offset, int pieceLength);
+    
+    /**
+     * converts char[12] to int[3]
+     */ 
+    int* requestCharToInt(char* payload);
+    
+
+    	
+    public:
+    	SingleBlock(unsigned int block_num,unsigned int block_size): 
+    		blockNum(block_num), blockSize(block_size)
+    	{
+    		offset = 0;
+    	}
+    	
+    	unsigned int getBlockNumber(){
+    		return blockNum;
+    	}
+    	
+    	unsigned int getBlockSize(){
+    		return blockSize;
+    	}
+    	unsigned int getOffset(){
+    		return offset;
+    	}
+    };
+    	
+    /**
+     * method chooses randomly which block to download from available ones
+     */ 
+    int chooseBlock();
+    
+    /**
+     * schedules request for block generation
+     */
+    void scheduleGenerateRequest();
+    
+    
 	bool connectionEstablished;
 	char peerName[20];
 	// number of blocks in a torrent
