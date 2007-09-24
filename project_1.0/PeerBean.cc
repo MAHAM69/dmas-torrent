@@ -1,5 +1,23 @@
 #include "PeerBean.h"
 
+PeerBean::PeerBean()
+{
+    
+}
+
+PeerBean::PeerBean( PeerBean* peerBean )
+{
+    setHash( peerBean->getHash() );
+    setID( peerBean->getID() );
+    setIp( peerBean->getIp() );
+    setPort( peerBean->getPort() );
+    setLeft( peerBean->getLeft() );
+}
+
+PeerBean::~PeerBean()
+{
+}
+
 char* PeerBean::getHash()
 {
     return hash;
