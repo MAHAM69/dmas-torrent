@@ -2,6 +2,8 @@
 #define COMMONS_H_
 
 
+#define DEBUG 1
+
 // constants used as addresses in internal node communication
 static const unsigned int NODE_MANAGER = 0;
 static const unsigned int DATA_MANAGER = 1;
@@ -26,9 +28,10 @@ static const unsigned int MSG_BITFIELD_RESPONSE = 5;
 //intrested message
 static const unsigned int MSG_INTERESTED = 6;
 
+static const unsigned int MSG_NOT_INTERESTED = 7;
 //choked/unchoked messages
-static const unsigned int MSG_CHOKED = 7;
-static const unsigned int MSG_UNCHOKED = 8;
+static const unsigned int MSG_CHOKED = 8;
+static const unsigned int MSG_UNCHOKED = 9;
 
 //---------------------------------------
 

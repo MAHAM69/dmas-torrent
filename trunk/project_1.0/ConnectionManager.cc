@@ -29,6 +29,9 @@ void ConnectionManager::initialize()
 
 void ConnectionManager::handleMessage(cMessage *msg)
 {	
+#ifdef DEBUG
+	ev << "handleHandshake    message name: " << ((msg != NULL) ? msg->name() : "NULL") << endl;
+#endif
 	NodeMessage *myMsg = NULL;
 	myMsg = check_and_cast<NodeMessage *>(msg);
 	if(myMsg != NULL)
@@ -77,6 +80,10 @@ void ConnectionManager::handleMessage(cMessage *msg)
 				msgInterested(myMsg);
 				break;
 			
+			    case MSG_NOT_INTERESTED:
+				msgNotInterested(myMsg);
+				break;
+				
 			    case MSG_CHOKED:
 				msgChoked(myMsg);
 				break;
@@ -98,7 +105,9 @@ void ConnectionManager::handleMessage(cMessage *msg)
  */ 
 void ConnectionManager::handleHandshake(NodeHandshakeMessage* myHandshakeMsg)
 {
-	ev << "handleHandshake" << endl;	
+#ifdef DEBUG
+	ev << "handleHandshake    message name: " << ((myHandshakeMsg != NULL) ? myHandshakeMsg->name() : "NULL") << endl;
+#endif
 	// if message is peer handshake, add it to list of connections				
 	PeersConnected newConnection( myHandshakeMsg->getHandshake().getPeerId() );
 	
@@ -138,7 +147,9 @@ void ConnectionManager::handleHandshake(NodeHandshakeMessage* myHandshakeMsg)
  */ 
 void ConnectionManager::handleHandshakeResponse(NodeHandshakeMessage* myHandshakeMsg)
 {				
-	ev << "handleHandshakeResponse" << endl;
+#ifdef DEBUG
+	ev << "handleHandshakeResponse    message name: " << ((myHandshakeMsg != NULL) ? myHandshakeMsg->name() : "NULL") << endl;
+#endif
 	// add to the list of connections
 	PeersConnected newConnection( myHandshakeMsg->getHandshake().getPeerId() );
 	
@@ -160,7 +171,9 @@ void ConnectionManager::handleHandshakeResponse(NodeHandshakeMessage* myHandshak
 // message is handshake so try casting to NodeHandshakeMessage
 void ConnectionManager::msgHandshake(NodeMessage* myMsg)
 {
-    ev << "msgHandShake" << endl;
+#ifdef DEBUG
+	ev << "msgHandshake    message name: " << ((myMsg != NULL) ? myMsg->name() : "NULL") << endl;
+#endif
     NodeHandshakeMessage* myHandshakeMsg = NULL;
     myHandshakeMsg = check_and_cast<NodeHandshakeMessage *>(myMsg);
 
@@ -175,15 +188,13 @@ void ConnectionManager::msgHandshake(NodeMessage* myMsg)
 
 void ConnectionManager::msgHandshakeResponse(NodeMessage* myMsg)
 {
-
-    if (myMsg == NULL)
-    	ev << "NULLLLLLLLLLLLLLLLLL" << endl;
+#ifdef DEBUG
+	ev << "msgHandshakeResponse    message name: " << ((myMsg != NULL) ? myMsg->name() : "NULL") << endl;
+#endif
     
     NodeHandshakeMessage* myHandshakeMsg = NULL;
     myHandshakeMsg = check_and_cast<NodeHandshakeMessage *>(myMsg);
-    if (myHandshakeMsg == NULL)
-	ev << "DRUUUUUUUUUUUUUUUGI NULL" << endl;
-    ev << "msgHandshakeResponse" << endl;	
+
     if(myHandshakeMsg != NULL )
     {
 	// add sender of the handhsake response to the 
@@ -196,7 +207,6 @@ void ConnectionManager::msgHandshakeResponse(NodeMessage* myMsg)
 	PeerToPeerMessage* peerMessage = 
 		this->generateBitfieldMessage(myHandshakeMsg->getHandshake().getPeerId(), peerName); 					
 
-	ev << "asdfasdfasdf" << endl;					
 	send(peerMessage,"dataManagerOut");
 
 	delete myMsg;
@@ -206,23 +216,31 @@ void ConnectionManager::msgHandshakeResponse(NodeMessage* myMsg)
 
 void ConnectionManager::msgConnectionsEstablished(NodeMessage* myMsg)
 {
-    ev << "msgConnectionEstablished" << endl;
+#ifdef DEBUG
+	ev << "msgConnectionsEstablished    message name: " << ((myMsg != NULL) ? myMsg->name() : "NULL") << endl;
+#endif
 }
 
 void ConnectionManager::msgBitField(NodeMessage* myMsg)
 {
-    ev << "msgBitField" << endl;
+#ifdef DEBUG
+	ev << "msgBitField    message name: " << ((myMsg != NULL) ? myMsg->name() : "NULL") << endl;
+#endif
     send(myMsg,"dataManagerOut");				
 }
 
 void ConnectionManager::msgSelfBitField(NodeMessage* myMsg)
 {
-    ev << "msgSelfBitField" << endl;
+#ifdef DEBUG
+	ev << "msgSelfBitField    message name: " << ((myMsg != NULL) ? myMsg->name() : "NULL") << endl;
+#endif
 }
 
 void ConnectionManager::msgInterested(NodeMessage* myMsg)
 {
-    ev << "msgInterested" << endl;
+#ifdef DEBUG
+	ev << "msgInterested    message name: " << ((myMsg != NULL) ? myMsg->name() : "NULL") << endl;
+#endif
     ChokeRandom* choke = new ChokeRandom();
     NodeMessage* response = new NodeMessage();
 
@@ -241,14 +259,28 @@ void ConnectionManager::msgInterested(NodeMessage* myMsg)
     delete myMsg;
 }
 
+void ConnectionManager::msgNotInterested(NodeMessage* myMsg)
+{
+#ifdef DEBUG
+	ev << "msgNotInterested    message name: " << ((myMsg != NULL) ? myMsg->name() : "NULL") << endl;
+#endif
+}
+
 void ConnectionManager::msgChoked(NodeMessage* myMsg)
 {
-    ev << "msgChoked" << endl;
+#ifdef DEBUG
+	ev << "msgChoked   message name: " << ((myMsg != NULL) ? myMsg->name() : "NULL") << endl;
+#endif
+    send(myMsg, "dataManagerOut");
     delete myMsg;
 }
 
 void ConnectionManager::msgUnchoked(NodeMessage* myMsg)
 {
-    ev << "msgUnchoked" << endl;
+#ifdef DEBUG
+	ev << "msgUnchoked    message name: " << ((myMsg != NULL) ? myMsg->name() : "NULL") << endl;
+#endif
+    
+    send(myMsg, "dataManagerOut");
     delete myMsg;
 }
