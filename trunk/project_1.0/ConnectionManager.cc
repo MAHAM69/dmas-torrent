@@ -42,12 +42,8 @@ void ConnectionManager::handleMessage(cMessage *msg)
 		int ownMessage = strcmp(myMsg->getDestination(), peerName);		
 		if (ownMessage != 0)
 		{
-			// message is own message (destination is not peer )		
-			if(myMsg->getType() == HANDSHAKE_MSG )
-			{
-				
-				send(myMsg,"nodeOut");
-			}
+			// message is own message (destination is not this peer )						
+				send(myMsg,"nodeOut");			
 		}		
 		else 
 		{
@@ -62,26 +58,55 @@ void ConnectionManager::handleMessage(cMessage *msg)
 				{
 					handleHandshake(myHandshakeMsg);
 				}
+				
+				delete myMsg;
 			}
 			else if (myMsg->getType() == HANDSHAKE_RESPONSE)
 			{
-				// here be genrating and sending of a bitfield message and adding sender of a responses to 
-				// the list of connections- to be done tomorrow 
+				
+								
+				NodeHandshakeMessage* myHandshakeMsg = NULL;
+				myHandshakeMsg = check_and_cast<NodeHandshakeMessage *>(myMsg);
+				
+				if(myHandshakeMsg != NULL )
+				{
+					// add sender of the handhsake response to the 
+					// connection established list
+					handleHandshakeResponse(myHandshakeMsg);
+					
+					// send sketch of bitfield message to data manager, 
+					// with destination to the handshaked node 
+															
+					PeerToPeerMessage* peerMessage = 
+						this->generateBitfieldMessage(myHandshakeMsg->getHandshake().getPeerId(), peerName); 					
+					
+					send(peerMessage,"dataManagerOut");
+					
+					delete myMsg;					
+				}
 			}
-			delete myMsg;
+			else if (myMsg->getType() == BITFIELD_MSG || myMsg->getType() == BITFIELD_RESPONSE)
+			{
+				send(myMsg,"dataManagerOut");				
+			}
+						
 		}
 
 	}
 }
 
+/**
+ * answer to the handshake by generating and sending handshake response; add sender of the handshake to the list
+ * of established connection 
+ */ 
 void ConnectionManager::handleHandshake(NodeHandshakeMessage* myHandshakeMsg)
 {
 	
 	// if message is peer handshake, add it to list of connections				
 	PeersConnected newConnection( myHandshakeMsg->getHandshake().getPeerId() );
 	
-	connectionsList.push_back(newConnection);
-						
+	connectionsList.push_back(newConnection);	
+	
 	if( !notifiedDataManager )
 	{
 		//notify data manager that connections were established and it may start requesting data
@@ -109,4 +134,26 @@ void ConnectionManager::handleHandshake(NodeHandshakeMessage* myHandshakeMsg)
 	send(handshakeResponse,"nodeOut");
 	
 	
+}
+
+/**
+ * adds sender of the handshake response to the list of connections
+ */ 
+void ConnectionManager::handleHandshakeResponse(NodeHandshakeMessage* myHandshakeMsg)
+{				
+	// add to the list of connections
+	PeersConnected newConnection( myHandshakeMsg->getHandshake().getPeerId() );
+	
+	connectionsList.push_back(newConnection);
+	
+	if( !notifiedDataManager )
+	{
+		//notify data manager that connections were established and it may start requesting data
+		
+		NodeMessage* conEstablished = new NodeMessage("connection established");
+		conEstablished->setType(CONNECTIONS_ESTABLISHED_MSG);
+		
+		send(conEstablished,"dataManagerOut");
+		notifiedDataManager = true;
+	}
 }
