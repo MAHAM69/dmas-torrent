@@ -108,7 +108,7 @@ void Tracker::response(char* ID)
     responseMsg->setInterval( REQ_INTERVAL );
     responseMsg->setNo_seeders( seeders );
     responseMsg->setNo_leechers( leechers );
-    //responseMsg->peers = peerList;
+    responseMsg->setPeers( NO_PEERS, peerList );
 
     send(responseMsg, "trackerOut", port);
 

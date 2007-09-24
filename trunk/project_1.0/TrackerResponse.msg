@@ -1,5 +1,9 @@
-//#include "commons.h"
-//#include "Tracker.h"
+cplusplus {{
+#include "PeerBean.h"
+#include "commons.h"
+}};
+
+class noncobject PeerBean;
 
 message TrackerResponse
 {
@@ -7,6 +11,6 @@ message TrackerResponse
 	double interval;
 	int no_seeders;
 	int no_leechers;
-	//strPeer[NO_PEERS] peers;
+	PeerBean peers[NO_PEERS];
 	
 }

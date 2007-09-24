@@ -17,6 +17,9 @@ private:
     double left;
 
 public:
+    PeerBean( );
+    PeerBean( PeerBean* );
+    virtual ~PeerBean();
     char* getHash();
     void setHash( char* );
     char* getID();
