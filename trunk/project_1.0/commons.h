@@ -1,8 +1,15 @@
 #ifndef COMMONS_H_
 #define COMMONS_H_
 
-
 #define DEBUG 1
+
+
+#define MSG_GET "GET"
+#define MSG_TRACKER_RESPONSE "TRACKER_RESPONSE"
+
+#define TRACKER_PORT 0
+#define ACTIVE_PEER  1
+
 
 // constants used as addresses in internal node communication
 static const unsigned int NODE_MANAGER = 0;
