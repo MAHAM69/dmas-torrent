@@ -1,2 +1,5 @@
 #!/bin/sh
+rm project_1.0
+clear
+opp_makemake -f
 make
