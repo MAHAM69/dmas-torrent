@@ -13,7 +13,7 @@ PeerToPeerMessage* PeerMessageGenerator::generateBitfieldMessage(char* destinati
 	peerMessage->setMessageId(5);
 	peerMessage->setDestination(destination);
 	// set bitfield as self message so it can be sent from connection manager to data manager
-	peerMessage->setType(SELF_BITFIELD_MSG);
+	peerMessage->setType(MSG_SELF_BITFIELD);
 	peerMessage->setSender(sender);
 	
 	return peerMessage;
@@ -36,7 +36,7 @@ void PeerMessageGenerator::generateBitfieldMessage( PeerToPeerMessage* peerMessa
 	peerMessage->setLength(bitfieldLen+1);
 	
 	// change type to bitfield, so the message can be sent out to external node
-	peerMessage->setType(BITFIELD_MSG);
+	peerMessage->setType(MSG_BITFIELD);
 }
 
 PeerToPeerMessage* PeerMessageGenerator::generateResponseForBitfieldMessage(PeerToPeerMessage* msgToRespond, char* bitfield, char* sender)
@@ -49,7 +49,7 @@ PeerToPeerMessage* PeerMessageGenerator::generateResponseForBitfieldMessage(Peer
 	
 	responseMsg->setDestination(msgToRespond->getSender());
 	
-	responseMsg->setType(BITFIELD_RESPONSE);
+	responseMsg->setType(MSG_BITFIELD_RESPONSE);
 	
 	responseMsg->setSender(sender);
 	
@@ -65,11 +65,12 @@ PeerToPeerMessage* PeerMessageGenerator::generateResponseForBitfieldMessage(Peer
 	return responseMsg;
 }
 
+
 PeerToPeerMessage* PeerMessageGenerator::generateRequestMessage(char* destination, char* sender, int blockIndex, int offset, int pieceLength)
 {
 	PeerToPeerMessage* peerMsg = new PeerToPeerMessage();
 	
-	peerMsg->setType(REQUEST_MSG);
+	peerMsg->setType(MSG_REQUEST);
 	peerMsg->setMessageId(6);
 	peerMsg->setLength(13);
 	
@@ -85,3 +86,4 @@ PeerToPeerMessage* PeerMessageGenerator::generateRequestMessage(char* destinatio
 	
 	return peerMsg;
 }
+
