@@ -9,9 +9,9 @@ NodeHandshakeMessage* HandshakeGenerator::generateHandshake(char* info_hash, cha
 	/** pass handshake to connection manager */
 	NodeHandshakeMessage* handshakeMessage = new NodeHandshakeMessage();
 	if(!response)
-		handshakeMessage->setType(HANDSHAKE_MSG);
+		handshakeMessage->setType(MSG_HANDSHAKE);
 	else
-		handshakeMessage->setType(HANDSHAKE_RESPONSE);
+		handshakeMessage->setType(MSG_HANDSHAKE_RESPONSE);
 	
 	handshakeMessage->setDestination(dest);
 	handshakeMessage->setHandshake(*_handshake);

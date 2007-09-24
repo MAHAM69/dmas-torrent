@@ -31,28 +31,28 @@ LIBS=
 
 # Generic definitions. To avoid redundancies across Makefiles, you can
 # import them from a common file -- see opp_makemake -c flag.
-NEDC=/opt/omnetpp/bin/nedtool
+NEDC=/opt/omnetpp-3.3/bin/nedtool
 MSGC=opp_msgc
 CXX=g++
 CC=gcc
 AR=ar cr
-SHLIB_LD=g++ -shared 
+SHLIB_LD=g++ -shared -fPIC
 MAKEDEPEND=opp_makedep -Y --objdirtree
 
-CFLAGS=-O2 -DNDEBUG=1   -DWITH_PARSIM -DWITH_NETBUILDER
+CFLAGS=-O2 -DNDEBUG=1 -fPIC  -DWITH_PARSIM -DWITH_NETBUILDER
 NEDCFLAGS=-Wno-unused
-LDFLAGS= -Wl,--export-dynamic
+LDFLAGS=
 EXE_SUFFIX=
 
 WITH_PARSIM=yes
 WITH_NETBUILDER=yes
 
-OMNETPP_INCL_DIR=/opt/omnetpp/include
-OMNETPP_LIB_DIR=/opt/omnetpp/lib
+OMNETPP_INCL_DIR=/opt/omnetpp-3.3/include
+OMNETPP_LIB_DIR=/opt/omnetpp-3.3/lib
 
 TK_LIBS= -ltk8.4 -ltcl8.4
 MPI_LIBS=
-XML_LIBS=
+XML_LIBS=-lxml2
 SYS_LIBS=-ldl -lstdc++ 
 SYS_LIBS_PURE=-ldl -lsocket -lnsl -lm $(shell $(CXX) -print-file-name=libstdc++.a)
 
@@ -84,7 +84,7 @@ MSGCOPTS= $(INCLUDE_PATH)
 SUBDIRS= 
 
 # object files in this directory
-OBJS= ConnectionManager_n.o DataManager_n.o NodeManager_n.o Node_n.o NodeNet_n.o Switch_n.o Tracker_n.o NodeHandshakeMessage_m.o NodeMessage_m.o P2PMessage_m.o RequestMessage_m.o TrackerResponse_m.o ActiveConnections.o ConnectionManager.o DataManager.o HandshakeGenerator.o NodeAddress.o Node.o NodeManager.o PeerBean.o PeerMessageGenerator.o PeersConnected.o PeersHandshake.o PeersMessage.o SingleActive.o Switch.o Tracker.o
+OBJS= ConnectionManager_n.o DataManager_n.o NodeManager_n.o Node_n.o NodeNet_n.o Switch_n.o Tracker_n.o NodeHandshakeMessage_m.o NodeMessage_m.o P2PMessage_m.o RequestMessage_m.o TrackerResponse_m.o ActiveConnections.o ChokeRandom.o ConnectionManager.o DataManager.o HandshakeGenerator.o NodeAddress.o Node.o NodeManager.o NumberTools.o PeerBean.o PeerMessageGenerator.o PeersConnected.o PeersHandshake.o PeersMessage.o SingleActive.o Switch.o Tracker.o
 
 # header files generated (from msg files)
 GENERATEDHEADERS= NodeHandshakeMessage_m.h NodeMessage_m.h P2PMessage_m.h RequestMessage_m.h TrackerResponse_m.h
@@ -180,6 +180,9 @@ TrackerResponse_m.cc TrackerResponse_m.h: TrackerResponse.msg
 ActiveConnections.o: ActiveConnections.cc
 	$(CXX) -c $(COPTS) ActiveConnections.cc
 
+ChokeRandom.o: ChokeRandom.cc
+	$(CXX) -c $(COPTS) ChokeRandom.cc
+
 ConnectionManager.o: ConnectionManager.cc
 	$(CXX) -c $(COPTS) ConnectionManager.cc
 
@@ -197,6 +200,9 @@ Node.o: Node.cc
 
 NodeManager.o: NodeManager.cc
 	$(CXX) -c $(COPTS) NodeManager.cc
+
+NumberTools.o: NumberTools.cc
+	$(CXX) -c $(COPTS) NumberTools.cc
 
 PeerBean.o: PeerBean.cc
 	$(CXX) -c $(COPTS) PeerBean.cc
@@ -264,6 +270,9 @@ re-makemake-m: makefile-ins
 ActiveConnections.o: ActiveConnections.cc \
   ActiveConnections.h \
   SingleActive.h
+ChokeRandom.o: ChokeRandom.cc \
+  ChokeRandom.h \
+  NumberTools.h
 ConnectionManager.o: ConnectionManager.cc \
   ConnectionManager.h \
   HandshakeGenerator.h \
@@ -271,7 +280,9 @@ ConnectionManager.o: ConnectionManager.cc \
   ActiveConnections.h \
   commons.h \
   PeerMessageGenerator.h \
-  SingleActive.h
+  ChokeRandom.h \
+  SingleActive.h \
+  NumberTools.h
 DataManager.o: DataManager.cc \
   DataManager.h \
   commons.h \
@@ -291,12 +302,16 @@ Node.o: Node.cc \
   PeersConnected.h \
   ActiveConnections.h \
   PeerMessageGenerator.h \
+  ChokeRandom.h \
   SingleActive.h \
+  NumberTools.h \
   NodeAddress.h
 NodeManager.o: NodeManager.cc \
   NodeManager.h \
   HandshakeGenerator.h \
   commons.h
+NumberTools.o: NumberTools.cc \
+  NumberTools.h
 PeerBean.o: PeerBean.cc \
   PeerBean.h
 PeerMessageGenerator.o: PeerMessageGenerator.cc \

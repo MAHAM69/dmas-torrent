@@ -48,51 +48,48 @@ void ConnectionManager::handleMessage(cMessage *msg)
 		else 
 		{
 			// message is NOT own message (hence: peer is intended receiver)
-			if(myMsg->getType() == HANDSHAKE_MSG )
-			{			
-				// message is handshake so try casting to NodeHandshakeMessage
-				NodeHandshakeMessage* myHandshakeMsg = NULL;
-				myHandshakeMsg = check_and_cast<NodeHandshakeMessage *>(myMsg);
-				
-				if(myHandshakeMsg != NULL )
-				{
-					handleHandshake(myHandshakeMsg);
-				}
-				
-				delete myMsg;
-			}
-			else if (myMsg->getType() == HANDSHAKE_RESPONSE)
+			ev << "Aktualny: " << peerName << "   Typ: " << myMsg->getType() << endl;
+			
+			switch (myMsg->getType())
 			{
+			    case MSG_HANDSHAKE:
+				msgHandshake(myMsg);
+				break;
+			
+			    case MSG_HANDSHAKE_RESPONSE:
+				msgHandshakeResponse(myMsg);
+				break;
 				
-								
-				NodeHandshakeMessage* myHandshakeMsg = NULL;
-				myHandshakeMsg = check_and_cast<NodeHandshakeMessage *>(myMsg);
-				
-				if(myHandshakeMsg != NULL )
-				{
-					// add sender of the handhsake response to the 
-					// connection established list
-					handleHandshakeResponse(myHandshakeMsg);
-					
-					// send sketch of bitfield message to data manager, 
-					// with destination to the handshaked node 
-															
-					PeerToPeerMessage* peerMessage = 
-						this->generateBitfieldMessage(myHandshakeMsg->getHandshake().getPeerId(), peerName); 					
-					
-					send(peerMessage,"dataManagerOut");
-					
-					delete myMsg;					
-				}
-			}
-			else if (myMsg->getType() == BITFIELD_MSG || myMsg->getType() == BITFIELD_RESPONSE)
-			{
-				send(myMsg,"dataManagerOut");				
-			}
-						
-		}
+			    case MSG_CONNECTIONS_ESTABLISHED:
+				msgConnectionsEstablished(myMsg);
+				break;
 
-	}
+			    case MSG_BITFIELD_RESPONSE:				
+			    case MSG_BITFIELD:
+				msgBitField(myMsg);
+				break;
+				
+			    case MSG_SELF_BITFIELD:
+				msgSelfBitField(myMsg);
+				break;
+				
+			    case MSG_INTERESTED:
+				msgInterested(myMsg);
+				break;
+			
+			    case MSG_CHOKED:
+				msgChoked(myMsg);
+				break;
+				
+			    case MSG_UNCHOKED:
+				msgUnchoked(myMsg);
+				break;
+				
+			    default:
+				break;    
+			};//end switch
+		}//end if
+	}//end if
 }
 
 /**
@@ -101,7 +98,7 @@ void ConnectionManager::handleMessage(cMessage *msg)
  */ 
 void ConnectionManager::handleHandshake(NodeHandshakeMessage* myHandshakeMsg)
 {
-	
+	ev << "handleHandshake" << endl;	
 	// if message is peer handshake, add it to list of connections				
 	PeersConnected newConnection( myHandshakeMsg->getHandshake().getPeerId() );
 	
@@ -112,7 +109,7 @@ void ConnectionManager::handleHandshake(NodeHandshakeMessage* myHandshakeMsg)
 		//notify data manager that connections were established and it may start requesting data
 		
 		NodeMessage* conEstablished = new NodeMessage("connection established");
-		conEstablished->setType(CONNECTIONS_ESTABLISHED_MSG);
+		conEstablished->setType(MSG_CONNECTIONS_ESTABLISHED);
 		
 		send(conEstablished,"dataManagerOut");
 		notifiedDataManager = true;
@@ -141,6 +138,7 @@ void ConnectionManager::handleHandshake(NodeHandshakeMessage* myHandshakeMsg)
  */ 
 void ConnectionManager::handleHandshakeResponse(NodeHandshakeMessage* myHandshakeMsg)
 {				
+	ev << "handleHandshakeResponse" << endl;
 	// add to the list of connections
 	PeersConnected newConnection( myHandshakeMsg->getHandshake().getPeerId() );
 	
@@ -151,9 +149,106 @@ void ConnectionManager::handleHandshakeResponse(NodeHandshakeMessage* myHandshak
 		//notify data manager that connections were established and it may start requesting data
 		
 		NodeMessage* conEstablished = new NodeMessage("connection established");
-		conEstablished->setType(CONNECTIONS_ESTABLISHED_MSG);
+		conEstablished->setType(MSG_CONNECTIONS_ESTABLISHED);
 		
 		send(conEstablished,"dataManagerOut");
 		notifiedDataManager = true;
 	}
+}
+
+
+// message is handshake so try casting to NodeHandshakeMessage
+void ConnectionManager::msgHandshake(NodeMessage* myMsg)
+{
+    ev << "msgHandShake" << endl;
+    NodeHandshakeMessage* myHandshakeMsg = NULL;
+    myHandshakeMsg = check_and_cast<NodeHandshakeMessage *>(myMsg);
+
+    if(myHandshakeMsg != NULL )
+    {
+	handleHandshake(myHandshakeMsg);
+    }
+
+    delete myMsg;
+}
+
+
+void ConnectionManager::msgHandshakeResponse(NodeMessage* myMsg)
+{
+
+    if (myMsg == NULL)
+    	ev << "NULLLLLLLLLLLLLLLLLL" << endl;
+    
+    NodeHandshakeMessage* myHandshakeMsg = NULL;
+    myHandshakeMsg = check_and_cast<NodeHandshakeMessage *>(myMsg);
+    if (myHandshakeMsg == NULL)
+	ev << "DRUUUUUUUUUUUUUUUGI NULL" << endl;
+    ev << "msgHandshakeResponse" << endl;	
+    if(myHandshakeMsg != NULL )
+    {
+	// add sender of the handhsake response to the 
+	// connection established list
+	handleHandshakeResponse(myHandshakeMsg);
+		
+	// send sketch of bitfield message to data manager, 
+	// with destination to the handshaked node 
+															
+	PeerToPeerMessage* peerMessage = 
+		this->generateBitfieldMessage(myHandshakeMsg->getHandshake().getPeerId(), peerName); 					
+
+	ev << "asdfasdfasdf" << endl;					
+	send(peerMessage,"dataManagerOut");
+
+	delete myMsg;
+    }
+
+}
+
+void ConnectionManager::msgConnectionsEstablished(NodeMessage* myMsg)
+{
+    ev << "msgConnectionEstablished" << endl;
+}
+
+void ConnectionManager::msgBitField(NodeMessage* myMsg)
+{
+    ev << "msgBitField" << endl;
+    send(myMsg,"dataManagerOut");				
+}
+
+void ConnectionManager::msgSelfBitField(NodeMessage* myMsg)
+{
+    ev << "msgSelfBitField" << endl;
+}
+
+void ConnectionManager::msgInterested(NodeMessage* myMsg)
+{
+    ev << "msgInterested" << endl;
+    ChokeRandom* choke = new ChokeRandom();
+    NodeMessage* response = new NodeMessage();
+
+    //TODO: wiadomosc typu MSG_INTERESTED ma miec pole ID zawierajace id wysylajacego    
+    //response->setDestination(myMsg->par("ID"));
+    if (choke->choked())
+    {
+	response->setType(MSG_CHOKED);
+    }
+    else
+    {
+	response->setType(MSG_UNCHOKED);
+    }
+    send(response,"nodeOut");	
+
+    delete myMsg;
+}
+
+void ConnectionManager::msgChoked(NodeMessage* myMsg)
+{
+    ev << "msgChoked" << endl;
+    delete myMsg;
+}
+
+void ConnectionManager::msgUnchoked(NodeMessage* myMsg)
+{
+    ev << "msgUnchoked" << endl;
+    delete myMsg;
 }
