@@ -94,7 +94,11 @@ class DataManager : public cSimpleModule,
      * converts char[12] to int[3]
      */ 
     int* requestCharToInt(char* payload);
-           
+    
+    /**
+     * finds peer that posses a block; if more than once peer posseses the block, it randomly choose one of them (behaviour compliant with torrent spec)
+     */ 
+     char* findPeer(int block);
     
     
 	bool connectionEstablished;
