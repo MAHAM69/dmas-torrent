@@ -141,7 +141,7 @@ void DataManager::handleMessage(cMessage *msg)
 				if(whichBlock > -1)
 				{
 					// checking which peer posses the required block
-					
+					char* peerOfInterest = findPeer(whichBlock);
 					
 					// generate request message
 					char* payload=this->requestIntToChar(10,10,10);
@@ -154,23 +154,6 @@ void DataManager::handleMessage(cMessage *msg)
 				
 				// periodically generate requests			
 				//scheduleGenerateRequest();
-			}
-
-			else if (myMsg->getType() == MSG_START_REQUESTS)
-			{
-				int whichBlock= chooseBlock();
-				
-				//whichBlock==-1 means that no blocks to download left
-				if(whichBlock > -1)
-				{
-					// generate request message
-					
-					//testing auxillary functions
-					
-				}
-				
-								
-				scheduleGenerateRequest();
 			}
 
 		}
@@ -305,4 +288,13 @@ int* DataManager::requestCharToInt(char* payload)
 	
 	delete strBuf;
 	return intValues;
+}
+
+char* DataManager::findPeer(int block)
+{
+	char searchedPeer[20];
+	
+	
+	
+	return searchedPeer;		
 }
