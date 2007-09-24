@@ -72,6 +72,7 @@ class DataManager : public cSimpleModule,
     	unsigned int getOffset(){
     		return offset;
     	}
+    	    	
     };
     	
     /**
@@ -93,37 +94,7 @@ class DataManager : public cSimpleModule,
      * converts char[12] to int[3]
      */ 
     int* requestCharToInt(char* payload);
-    
-
-    	
-    public:
-    	SingleBlock(unsigned int block_num,unsigned int block_size): 
-    		blockNum(block_num), blockSize(block_size)
-    	{
-    		offset = 0;
-    	}
-    	
-    	unsigned int getBlockNumber(){
-    		return blockNum;
-    	}
-    	
-    	unsigned int getBlockSize(){
-    		return blockSize;
-    	}
-    	unsigned int getOffset(){
-    		return offset;
-    	}
-    };
-    	
-    /**
-     * method chooses randomly which block to download from available ones
-     */ 
-    int chooseBlock();
-    
-    /**
-     * schedules request for block generation
-     */
-    void scheduleGenerateRequest();
+           
     
     
 	bool connectionEstablished;

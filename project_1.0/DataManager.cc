@@ -156,7 +156,7 @@ void DataManager::handleMessage(cMessage *msg)
 				//scheduleGenerateRequest();
 			}
 
-			else if (myMsg->getType() == START_REQUESTS)
+			else if (myMsg->getType() == MSG_START_REQUESTS)
 			{
 				int whichBlock= chooseBlock();
 				
@@ -306,100 +306,3 @@ int* DataManager::requestCharToInt(char* payload)
 	delete strBuf;
 	return intValues;
 }
-
-
-void DataManager::scheduleGenerateRequest()
-{
-	NodeMessage* startRequests = new NodeMessage(); 
-	
-	startRequests->setType(START_REQUESTS);
-	
-	scheduleAt(simTime() + 10, startRequests);
-}
-
-int DataManager::chooseBlock()
-{
-	// determine in which blocks client is interested
-	char* blocksOfInterest = new char[blocksNumber +1];	
-	
-	for(unsigned int i =0; i < blocksNumber; i++)
-	{
-		blocksOfInterest[i] = 'n';
-	}
-	blocksOfInterest[blocksNumber] = '\0';
-	
-	
-	
-	// for testing purposes peersBirfields are changed
-	peersBitfields.clear();
-	
-	int zeroElements = peersBitfields.size();
-	
-	char bitf1[20];
-	
-	for(int i=0; i< 20; i++)
-		bitf1[i]='y';
-	
-	Bitfield* ex1 = new Bitfield("exxamplary",bitf1);
-	peersBitfields.push_back(*ex1);
-		
-	
-	for(int i=0; i<20; i++)
-		currentBitfield[i] = 'y';
-	
-	
-	// for each bitfield among peersBitfields
-	for(unsigned int j =0; j < peersBitfields.size(); j++)
-		// determine which block is available by comparing peers bitfields (so what is available)  
-		// with what client has (currentBitfield), so that it determines 		
-		// which blocks client is really interested in and set blocksOfInterest to yes
-		for(unsigned int l=0; l < blocksNumber; l++)
-		{
-			char alpha = peersBitfields[j].getBitfield()[l];
-			char beta = currentBitfield[l];
-			if( peersBitfields[j].getBitfield()[l] ==  'y' && currentBitfield[l] == 'n')
-				blocksOfInterest[l] = 'y';			
-		}	
-	
-	
-	
-	unsigned int howManyBlocksOfInterest= 0;
-	
-	for(unsigned int i=0;i < blocksNumber; i++)
-	{
-		if(blocksOfInterest[i] == 'y')
-			howManyBlocksOfInterest++;
-	}
-	
-	if(howManyBlocksOfInterest > 0){
-		
-		
-		// choose randomly which block to download
-		int whichBlock = rand() % howManyBlocksOfInterest;
-		
-		// determine number of a block corresponding to the chosen 'whichBlock' 
-		// in an array of blocks
-		unsigned int blockNumber = 0;
-		
-		
-		for(blockNumber=0; blockNumber < blocksNumber && whichBlock >= 0; blockNumber++)
-		{
-			if( blocksOfInterest[blockNumber] == 'y' )
-			{
-				whichBlock--;			
-			}			
-		}
-		
-		blockNumber--;
-		
-		delete []blocksOfInterest;
-		return blockNumber;
-	}
-	else
-	{
-		delete []blocksOfInterest;
-		return -1;
-	}
-	
-}
-
