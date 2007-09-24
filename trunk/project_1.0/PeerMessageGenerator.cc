@@ -70,12 +70,13 @@ PeerToPeerMessage* PeerMessageGenerator::generateRequestMessage(char* destinatio
 {
 	PeerToPeerMessage* peerMsg = new PeerToPeerMessage();
 	
+	peerMsg->setDestination(destination);
+	peerMsg->setSender(sender);
+	
 	peerMsg->setType(MSG_REQUEST);
 	peerMsg->setMessageId(6);
 	peerMsg->setLength(13);
 	
-	peerMsg->setDestination(destination);
-	peerMsg->setSender(sender);
 	
 	//char* payload = requestIntToChar(blockIndex,offset,pieceLength);
 		
