@@ -20,7 +20,7 @@ class PeerMessageGenerator : public cNumberTools
 		void generateBitfieldMessage( PeerToPeerMessage* peerMessage, char* bitfield);
 		PeerToPeerMessage* generateResponseForBitfieldMessage(PeerToPeerMessage* msgToRespond, char* bitfield, char* sender);
 		
-		PeerToPeerMessage* generateRequestMessage(char* destnation, char* sender, int index, int offset, int bytesLeft);
+		PeerToPeerMessage* generateRequestMessage(char* destnation, char* sender, char* payload);
 };
 
 

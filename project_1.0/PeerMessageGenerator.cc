@@ -66,7 +66,7 @@ PeerToPeerMessage* PeerMessageGenerator::generateResponseForBitfieldMessage(Peer
 }
 
 
-PeerToPeerMessage* PeerMessageGenerator::generateRequestMessage(char* destination, char* sender, int blockIndex, int offset, int pieceLength)
+PeerToPeerMessage* PeerMessageGenerator::generateRequestMessage(char* destination, char* sender, char* payload)
 {
 	PeerToPeerMessage* peerMsg = new PeerToPeerMessage();
 	
@@ -76,11 +76,7 @@ PeerToPeerMessage* PeerMessageGenerator::generateRequestMessage(char* destinatio
 	peerMsg->setType(MSG_REQUEST);
 	peerMsg->setMessageId(6);
 	peerMsg->setLength(13);
-	
-	
-	//char* payload = requestIntToChar(blockIndex,offset,pieceLength);
 		
-	char payload[12];
 	peerMsg->setPayloadArraySize(12);
 	for(int i =0; i<12; i++)
 		peerMsg->setPayload(i,payload[i]);
