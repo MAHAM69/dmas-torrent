@@ -5,6 +5,9 @@ Define_Module(NodeManager);
 
 void NodeManager::initialize()
 {
+    // initialize randomization	
+    srand((unsigned)time(0) + id()); 
+
 	// get peer name	
 	strcpy(peerName, par("peer_name"));
 
@@ -28,7 +31,12 @@ void NodeManager::initialize()
 	startMsg->setEvent("started");
 	ev << "Node: " << peerName << endl;
 	
-	send(startMsg, "connectionManagerOut");
+    double delay = getRandomFloat(100., 2);
+#ifdef DEBUG    
+    ev << "Node: " << nodeName << " initialize is delayed: " << delay << endl;
+#endif
+    sendDelayed(startMsg, delay, "connectionManagerOut");
+//	send(startMsg, "connectionManagerOut");
 	 
 	
 	// exemplary initialization of peersList
@@ -107,6 +115,7 @@ void NodeManager::receiveTrackerResponse( cMessage *msg )
     // Convert char* to string
     oss << trackerResponse->getCvs();
     cvs = oss.str();
+    oss.str("");
     cout << cvs << endl;
     
     string rest  = "";
