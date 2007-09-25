@@ -1,0 +1,6 @@
+#!/bin/sh
+rm project_1.0
+rm *_m.h
+rm *_m.cc
+rm *_n.cc
+rm *.o
