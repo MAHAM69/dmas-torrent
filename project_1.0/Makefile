@@ -84,7 +84,7 @@ MSGCOPTS= $(INCLUDE_PATH)
 SUBDIRS= 
 
 # object files in this directory
-OBJS= ConnectionManager_n.o DataManager_n.o NodeManager_n.o Node_n.o NodeNet_n.o Switch_n.o Tracker_n.o NodeHandshakeMessage_m.o NodeMessage_m.o P2PMessage_m.o RequestMessage_m.o TrackerResponse_m.o ActiveConnections.o ChokeRandom.o ConnectionManager.o CVSParser.o DataManager.o HandshakeGenerator.o NodeAddress.o Node.o NodeManager.o NumberTools.o PeerBean.o PeerMessageGenerator.o PeersConnected.o PeersHandshake.o PeersMessage.o SingleActive.o Switch.o Tracker.o
+OBJS= ConnectionManager_n.o DataManager_n.o NodeManager_n.o Node_n.o NodeNet_n.o Switch_n.o Tracker_n.o NodeHandshakeMessage_m.o NodeMessage_m.o P2PMessage_m.o RequestMessage_m.o TrackerResponse_m.o ActiveConnections.o ChokeRandom.o ConnectionManager.o  CVSParser.o DataManager.o  HandshakeGenerator.o NodeAddress.o Node.o  NodeManager.o     NumberTools.o  PeerBean.o PeerMessageGenerator.o PeersConnected.o PeersHandshake.o PeersMessage.o  SingleActive.o Switch.o  Tracker.o  
 
 # header files generated (from msg files)
 GENERATEDHEADERS= NodeHandshakeMessage_m.h NodeMessage_m.h P2PMessage_m.h RequestMessage_m.h TrackerResponse_m.h
@@ -281,24 +281,35 @@ ChokeRandom.o: ChokeRandom.cc \
 ConnectionManager.o: ConnectionManager.cc \
   ConnectionManager.h \
   HandshakeGenerator.h \
+  NodeHandshakeMessage_m.h \
   PeersConnected.h \
   ActiveConnections.h \
   commons.h \
+  P2PMessage_m.h \
   PeerMessageGenerator.h \
   ChokeRandom.h \
+  PeersHandshake.h \
+  NodeMessage_m.h \
   SingleActive.h \
   NumberTools.h \
   Choke.h
+ConnectionManager_n.o: ConnectionManager_n.cc
 CVSParser.o: CVSParser.cc \
   CVSParser.h
 DataManager.o: DataManager.cc \
   DataManager.h \
+  NodeMessage_m.h \
   commons.h \
   PeerMessageGenerator.h \
+  P2PMessage_m.h \
   NumberTools.h
+DataManager_n.o: DataManager_n.cc
 HandshakeGenerator.o: HandshakeGenerator.cc \
   HandshakeGenerator.h \
-  commons.h
+  NodeHandshakeMessage_m.h \
+  commons.h \
+  PeersHandshake.h \
+  NodeMessage_m.h
 NodeAddress.o: NodeAddress.cc \
   NodeAddress.h \
   commons.h
@@ -309,42 +320,79 @@ Node.o: Node.cc \
   Switch.h \
   HandshakeGenerator.h \
   NodeAddress.h \
+  NodeHandshakeMessage_m.h \
+  RequestMessage_m.h \
   commons.h \
+  PeersHandshake.h \
+  NodeMessage_m.h \
   PeersConnected.h \
   ActiveConnections.h \
+  P2PMessage_m.h \
   PeerMessageGenerator.h \
   ChokeRandom.h \
   SingleActive.h \
   NumberTools.h \
-  Choke.h
+  Choke.h \
+  TrackerResponse_m.h
+NodeHandshakeMessage_m.o: NodeHandshakeMessage_m.cc \
+  NodeHandshakeMessage_m.h \
+  PeersHandshake.h \
+  NodeMessage_m.h
 NodeManager.o: NodeManager.cc \
   NodeManager.h \
   HandshakeGenerator.h \
   NodeAddress.h \
-  commons.h
+  NodeHandshakeMessage_m.h \
+  RequestMessage_m.h \
+  commons.h \
+  PeersHandshake.h \
+  NodeMessage_m.h
+NodeManager_n.o: NodeManager_n.cc
+NodeMessage_m.o: NodeMessage_m.cc \
+  NodeMessage_m.h
+Node_n.o: Node_n.cc
+NodeNet_n.o: NodeNet_n.cc
 NumberTools.o: NumberTools.cc \
   NumberTools.h
+P2PMessage_m.o: P2PMessage_m.cc \
+  P2PMessage_m.h \
+  NodeMessage_m.h
 PeerBean.o: PeerBean.cc \
   PeerBean.h
 PeerMessageGenerator.o: PeerMessageGenerator.cc \
   PeerMessageGenerator.h \
   commons.h \
-  NumberTools.h
+  P2PMessage_m.h \
+  NumberTools.h \
+  NodeMessage_m.h
 PeersConnected.o: PeersConnected.cc \
   PeersConnected.h
 PeersHandshake.o: PeersHandshake.cc \
   PeersHandshake.h
 PeersMessage.o: PeersMessage.cc \
   PeersMessage.h
+RequestMessage_m.o: RequestMessage_m.cc \
+  RequestMessage_m.h
 SingleActive.o: SingleActive.cc \
   SingleActive.h
 Switch.o: Switch.cc \
   Switch.h \
+  NodeMessage_m.h \
+  TrackerResponse_m.h \
   NodeAddress.h \
   commons.h
+Switch_n.o: Switch_n.cc
 Tracker.o: Tracker.cc \
   Tracker.h \
   commons.h \
+  TrackerResponse_m.h \
+  RequestMessage_m.h \
   NodeAddress.h \
   PeerBean.h \
-  CVSParser.h
+  CVSParser.h \
+  NodeMessage_m.h
+Tracker_n.o: Tracker_n.cc
+TrackerResponse_m.o: TrackerResponse_m.cc \
+  TrackerResponse_m.h \
+  NodeMessage_m.h \
+  commons.h

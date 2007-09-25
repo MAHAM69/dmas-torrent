@@ -31,23 +31,20 @@ void ConnectionManager::initialize()
 
 void ConnectionManager::handleMessage(cMessage *msg)
 {
-    ev << "CM receives " << msg->name() << endl;
+#ifdef DEBUG
+	ev << "ConnectionManager::handleHandshake    message name: " << ((msg != NULL) ? msg->name() : "NULL") << endl;
+#endif
     if ( strcmp( msg->name(), MSG_GET ) == 0 )
     {
 	send(msg, "nodeOut");
     }
     else if ( strcmp( msg->name(), MSG_TRACKER_RESPONSE ) == 0 )
     {
-    	
     	// temporarly, so that the simulation can continue; send handshake to some nodes;
     	send(msg,"nodeManagerOut");
-    	
     }
     else
     {
-#ifdef DEBUG
-	ev << "handleHandshake    message name: " << ((msg != NULL) ? msg->name() : "NULL") << endl;
-#endif
 	NodeMessage *myMsg = NULL;
 	myMsg = check_and_cast<NodeMessage *>(msg);
 	if(myMsg != NULL)
