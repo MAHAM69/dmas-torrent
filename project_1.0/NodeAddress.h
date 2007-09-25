@@ -2,9 +2,15 @@
 #define NODEADDRESS_H_
 
 #include <string>
+#include <iostream>
+#include "StringConvert.h"
+#include "NumberTools.h"
 #include "commons.h"
 
-class NodeAddress
+using namespace std;
+
+class NodeAddress : public StringConvert,
+		    public cNumberTools
 {
     public:
 	int nodeAddress(const char* nodeName);

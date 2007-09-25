@@ -5,6 +5,14 @@ Define_Module(ConnectionManager);
 
 void ConnectionManager::initialize()
 {
+    // Creating node name.
+    int peerId = par("peerId");
+    strcpy( peerName, par("peer_name") );
+    oss << peerName << peerId;
+    nodeName = oss.str();
+    oss.str("");
+    strcpy( peerName, nodeName.c_str() );
+
 
 	//scheduled message	
 	printf("CM init\n");
@@ -13,8 +21,6 @@ void ConnectionManager::initialize()
 	scheduleAt(simTime()+10, scheduledMsg);
 	
 	freeUploadSlots = NO_UPLOADS;
-	
-	strcpy(peerName,par("peer_name"));
 	
 	// initialize active connections - maximum number of 
 	// uploads and downloads to be read from parameters (now 1,1)

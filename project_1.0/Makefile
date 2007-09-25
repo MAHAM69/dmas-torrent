@@ -31,28 +31,28 @@ LIBS=
 
 # Generic definitions. To avoid redundancies across Makefiles, you can
 # import them from a common file -- see opp_makemake -c flag.
-NEDC=/opt/omnetpp-3.3/bin/nedtool
+NEDC=/opt/omnetpp/bin/nedtool
 MSGC=opp_msgc
 CXX=g++
 CC=gcc
 AR=ar cr
-SHLIB_LD=g++ -shared -fPIC
+SHLIB_LD=g++ -shared 
 MAKEDEPEND=opp_makedep -Y --objdirtree
 
-CFLAGS=-O2 -DNDEBUG=1 -fPIC  -DWITH_PARSIM -DWITH_NETBUILDER
+CFLAGS=-O2 -DNDEBUG=1   -DWITH_PARSIM -DWITH_NETBUILDER
 NEDCFLAGS=-Wno-unused
-LDFLAGS=
+LDFLAGS= -Wl,--export-dynamic
 EXE_SUFFIX=
 
 WITH_PARSIM=yes
 WITH_NETBUILDER=yes
 
-OMNETPP_INCL_DIR=/opt/omnetpp-3.3/include
-OMNETPP_LIB_DIR=/opt/omnetpp-3.3/lib
+OMNETPP_INCL_DIR=/opt/omnetpp/include
+OMNETPP_LIB_DIR=/opt/omnetpp/lib
 
 TK_LIBS= -ltk8.4 -ltcl8.4
 MPI_LIBS=
-XML_LIBS=-lxml2
+XML_LIBS=
 SYS_LIBS=-ldl -lstdc++ 
 SYS_LIBS_PURE=-ldl -lsocket -lnsl -lm $(shell $(CXX) -print-file-name=libstdc++.a)
 
@@ -275,6 +275,7 @@ ConnectionManager.o: ConnectionManager.cc \
   HandshakeGenerator.h \
   PeersConnected.h \
   ActiveConnections.h \
+  StringConvert.h \
   commons.h \
   PeerMessageGenerator.h \
   SingleActive.h \
@@ -283,6 +284,7 @@ CVSParser.o: CVSParser.cc \
   CVSParser.h
 DataManager.o: DataManager.cc \
   DataManager.h \
+  StringConvert.h \
   commons.h \
   PeerMessageGenerator.h \
   NumberTools.h
@@ -291,6 +293,8 @@ HandshakeGenerator.o: HandshakeGenerator.cc \
   commons.h
 NodeAddress.o: NodeAddress.cc \
   NodeAddress.h \
+  StringConvert.h \
+  NumberTools.h \
   commons.h
 Node.o: Node.cc \
   NodeManager.h \
@@ -300,9 +304,9 @@ Node.o: Node.cc \
   HandshakeGenerator.h \
   NodeAddress.h \
   CVSParser.h \
-  StringConvert.h \
   NumberTools.h \
   commons.h \
+  StringConvert.h \
   PeersConnected.h \
   ActiveConnections.h \
   PeerMessageGenerator.h \
@@ -312,9 +316,9 @@ NodeManager.o: NodeManager.cc \
   HandshakeGenerator.h \
   NodeAddress.h \
   CVSParser.h \
-  StringConvert.h \
   NumberTools.h \
-  commons.h
+  commons.h \
+  StringConvert.h
 NumberTools.o: NumberTools.cc \
   NumberTools.h
 PeerBean.o: PeerBean.cc \
@@ -334,11 +338,14 @@ SingleActive.o: SingleActive.cc \
 Switch.o: Switch.cc \
   Switch.h \
   NodeAddress.h \
-  commons.h
+  commons.h \
+  StringConvert.h \
+  NumberTools.h
 Tracker.o: Tracker.cc \
   Tracker.h \
   commons.h \
   PeerBean.h \
   NodeAddress.h \
   CVSParser.h \
-  StringConvert.h
+  StringConvert.h \
+  NumberTools.h

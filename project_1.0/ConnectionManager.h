@@ -8,6 +8,7 @@
 #include "NodeHandshakeMessage_m.h"
 #include "PeersConnected.h"
 #include "ActiveConnections.h"
+#include "StringConvert.h"
 #include "commons.h"
 #include "P2PMessage_m.h"
 #include "PeerMessageGenerator.h"
@@ -20,9 +21,11 @@ using namespace std;
  */
 class ConnectionManager:    public cSimpleModule,
 			    public HandshakeGenerator,
-		    	public PeerMessageGenerator
+			    public PeerMessageGenerator,
+			    public StringConvert
 {
 	private:
+		string nodeName;
 		char peerName[20];
 		
 		// flag determines if DataManager has been notified about established connections

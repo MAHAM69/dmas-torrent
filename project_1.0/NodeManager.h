@@ -8,7 +8,7 @@
 #include "HandshakeGenerator.h"
 #include "NodeAddress.h"
 #include "CVSParser.h"
-#include "StringConvert.h"
+//#include "StringConvert.h"
 #include "NumberTools.h"
 #include "NodeHandshakeMessage_m.h"
 #include "RequestMessage_m.h"
@@ -23,16 +23,14 @@ using namespace std;
 class NodeManager : public cSimpleModule,
 		    public HandshakeGenerator,
 		    public NodeAddress,
-		    public CVSParser,
-		    public StringConvert,
-		    public cNumberTools
+		    public CVSParser
 {
     private: 
 	/** peers list received from tracker */
 	//char peersList[10][10];		
 
-	char peerName[20];
 	string nodeName;
+	char peerName[20];
 		
 	vector<string> peersList;
 		

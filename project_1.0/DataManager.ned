@@ -1,5 +1,6 @@
 simple DataManager
     parameters:
+	peerId : numeric,
 	peer_name : string;
 		
     gates:

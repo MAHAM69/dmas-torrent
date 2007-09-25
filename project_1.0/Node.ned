@@ -10,28 +10,30 @@ import
 //
 module Node
     parameters:
+	id : numeric const,
 	node_name : string;
-		
     gates:
 	in: in;
 	out: out;
 	
-				
     submodules:
 	dataManager: DataManager        	            
 	    parameters:
+		peerId = id,
 		peer_name = node_name;
 	    display:
 		"i=block/process,cyan";
 
 	nodeManager: NodeManager            
 	    parameters:
+		peerId = id,
 		peer_name=node_name;
 	    display: 
 		"i=block/process,gold";
             
 	connectionManager: ConnectionManager
 	    parameters:
+		peerId = id,
 		peer_name = node_name;
 	    display:
 		"i=block/process,gold";

@@ -4,38 +4,33 @@ import
     "Switch";
 
 module NodeNet
+	parameters:
+		numOfNodes: numeric const;
 	submodules:
 		tracker: Tracker;
 			display: "i=misc/building;";
-		node1: Node;
-			display: "i=device/pc2;";
-		node2: Node;
-			display: "i=device/pc2;";
-		node3: Node;			
-			display: "i=device/pc2;";
-		node4: Node;
+		node: Node[ numOfNodes ];
+			parameters:
+			    id = index,
+			    node_name = "node";
 			display: "i=device/pc2;";
 		switch : Switch;
+			gatesizes:
+			    in[ numOfNodes+1 ],
+			    out[ numOfNodes+1 ];
 			display: "i=misc/cloud;";
 
 	connections:		
-		//node1.out --> node2.in;
-		//node1.in <-- node2.out;
-		tracker.trackerOut --> switch.in++;
-		tracker.trackerIn <-- switch.out++;
+		tracker.trackerOut --> switch.in[0];
+		tracker.trackerIn <-- switch.out[0];
 
-		node1.out --> switch.in++;
-		node1.in <-- switch.out++;
-		
-		node2.out --> switch.in++;
-		node2.in <-- switch.out++;
-		
-		node3.out --> switch.in++;
-		node3.in <-- switch.out++;
-		
-		node4.out --> switch.in++;
-		node4.in <-- switch.out++;
+		for i=0..numOfNodes-1 do
+		    node[ i ].out  --> switch.in[ i+1 ];
+		    node[ i ].in  <--  switch.out[ i+1 ];
+		endfor;
 endmodule
 
 network examplaryNode : NodeNet
+    parameters:
+	numOfNodes	= input( 4, "Number of nodes?" );
 endnetwork
