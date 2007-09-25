@@ -4,21 +4,25 @@
 // returns sitch\s gate for certain node-name 
 int NodeAddress::nodeAddress(const char* nodeName)
 {
-	if( !strcmp("node1",nodeName) )
+	if( !strcmp("tracker", nodeName ))
 	{
-		return 0;
+		return TRACKER_PORT;
 	}
-	else if( !strcmp("node2",nodeName) )
+	else if( !strcmp("node1",nodeName) )
 	{
 		return 1;
 	}
-	else if( !strcmp("node3",nodeName) )
+	else if( !strcmp("node2",nodeName) )
 	{
 		return 2;
 	}
-	else if( !strcmp("node4",nodeName) )
+	else if( !strcmp("node3",nodeName) )
 	{
 		return 3;
+	}
+	else if( !strcmp("node4",nodeName) )
+	{
+		return 4;
 	}
 	else 
 		return -1;

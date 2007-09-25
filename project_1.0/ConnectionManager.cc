@@ -28,7 +28,17 @@ void ConnectionManager::initialize()
 
 
 void ConnectionManager::handleMessage(cMessage *msg)
-{	
+{
+    ev << "CM receives " << msg->name() << endl;
+    if ( strcmp( msg->name(), MSG_GET ) == 0 )
+    {
+	send(msg, "nodeOut");
+    }
+    else if ( strcmp( msg->name(), MSG_TRACKER_RESPONSE ) == 0 )
+    {
+    }
+    else
+    {
 #ifdef DEBUG
 	ev << "handleHandshake    message name: " << ((msg != NULL) ? msg->name() : "NULL") << endl;
 #endif
@@ -97,6 +107,7 @@ void ConnectionManager::handleMessage(cMessage *msg)
 			};//end switch
 		}//end if
 	}//end if
+    }
 }
 
 /**

@@ -21,9 +21,9 @@ class Tracker: public cSimpleModule,
 	
 	PeerBean peers[MAX_PEERS];  //list of peers
 	
-	void addPeer(double, int, double, char*, char*);
-	void delPeer(char*);
-	void response(char*);
+	void addPeer( const double, const int, const double, const char*, const char* );
+	void delPeer( const char* );
+	void response( const char* );
 
     public:
 	virtual void initialize();

@@ -1,9 +1,12 @@
 import
     "Node",
+    "Tracker",
     "Switch";
 
 module NodeNet
 	submodules:
+		tracker: Tracker;
+			display: "i=misc/building;";
 		node1: Node;
 			display: "i=device/pc2;";
 		node2: Node;
@@ -14,10 +17,13 @@ module NodeNet
 			display: "i=device/pc2;";
 		switch : Switch;
 			display: "i=misc/cloud;";
-	
+
 	connections:		
 		//node1.out --> node2.in;
 		//node1.in <-- node2.out;
+		tracker.trackerOut --> switch.in++;
+		tracker.trackerIn <-- switch.out++;
+
 		node1.out --> switch.in++;
 		node1.in <-- switch.out++;
 		
@@ -29,9 +35,7 @@ module NodeNet
 		
 		node4.out --> switch.in++;
 		node4.in <-- switch.out++;
-
 endmodule
 
 network examplaryNode : NodeNet
 endnetwork
-
