@@ -1,12 +1,17 @@
 #include "NodeManager.h"
+
 // The module class needs to be registered with OMNeT++
 Define_Module(NodeManager);
-
 
 void NodeManager::initialize()
 {
 	// get peer name	
-	strcpy(peerName, par("peer_name"));	
+	strcpy(peerName, par("peer_name"));
+
+    // Get peer name to string variable.	
+    oss << peerName; //<< par("peer_name");
+    nodeName = oss.str();
+    oss.str("");
 
 	// NodeManager::initialize is supposed to: simulate reading of .torrent file,
 	// setting peer name, sending GET to tracker and reading tracker's response, sending handshake to known peers
@@ -110,7 +115,9 @@ void NodeManager::handshakeToPeers()
 		handshakeMessage->setDestination(peersList[i]);
 		handshakeMessage->setHandshake(*_handshake);
 		*/
-		NodeHandshakeMessage* handshakeMessage = generateHandshake("info_hash",peerName,peersList[i], false);
+		char tmp[20];
+		strcpy( tmp, peersList[i].c_str() );
+		NodeHandshakeMessage* handshakeMessage = generateHandshake("info_hash",peerName, tmp, false);
 		
 		ev << peerName << " sending handshake to "<< peersList[i] << endl; 
 			
@@ -126,34 +133,41 @@ void NodeManager::receiveTrackerResponse( cMessage *msg )
     TrackerResponse* trackerResponse = NULL;
     trackerResponse = check_and_cast<TrackerResponse *>(msg);
     if ( trackerResponse == NULL ) return;
-    ostringstream out;
     string cvs = "";
-    out << trackerResponse->getCvs();
-    cvs = out.str();
+    // Convert char* to string
+    oss << trackerResponse->getCvs();
+    cvs = oss.str();
+    cout << cvs << endl;
     
-    string value = "";
     string rest  = "";
     int i = 0;
     peersList.clear();
+#ifdef DEBUG
+	ev << "------------------------------" << endl;
+        ev << "Name: " << nodeName << endl;
+#endif
     while ( cvs != "" )
     {
-	value = "";
-	parse( cvs, value, rest );
-	cout << cvs << " | " << value << " | " << rest << endl;
-	char ID[20];
+	string *value = new string("");
+	parse( cvs, *value, rest );
+	cout << cvs << endl;
+#ifdef DEBUG
+        ev << "i=" << i << "   value: " << *value << endl;
+#endif
 	if ( i == 0 )
 	{
-	    strcpy( ID, value.c_str() );
-#ifdef DEBUG
-            ev << "i=" << i << "   ID: " << ID << endl;
-#endif
-	    if ( strcmp( peerName, ID ) != 0 )
+	    if ( *value != nodeName )
 	    {
-		peersList.push_back( ID );
+		peersList.push_back( *value );
 	    }
 	}
 	i = (i+1) % 5;
 	cvs = rest;
+    }
+    cout << "Peers list (size: " << peersList.size() << "):" << endl;
+    for ( int i = 0; i < peersList.size(); i++ )
+    {
+	cout << peersList[i] << endl;
     }
     handshakeToPeers();
 }
