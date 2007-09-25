@@ -69,4 +69,7 @@ const double REQ_INTERVAL=100;
 //max number of downloads for peer
 const int NO_DOWNLOADS = 1;
 
+//max number of uploads for peer
+const int NO_UPLOADS = 2;
+
 #endif /*COMMONS_H*/

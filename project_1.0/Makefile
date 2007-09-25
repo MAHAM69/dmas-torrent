@@ -272,6 +272,8 @@ ActiveConnections.o: ActiveConnections.cc \
   SingleActive.h
 ChokeRandom.o: ChokeRandom.cc \
   ChokeRandom.h \
+  Choke.h \
+  commons.h \
   NumberTools.h
 ConnectionManager.o: ConnectionManager.cc \
   ConnectionManager.h \
@@ -282,22 +284,26 @@ ConnectionManager.o: ConnectionManager.cc \
   PeerMessageGenerator.h \
   ChokeRandom.h \
   SingleActive.h \
-  NumberTools.h
+  NumberTools.h \
+  Choke.h
 DataManager.o: DataManager.cc \
   DataManager.h \
   commons.h \
-  PeerMessageGenerator.h
+  PeerMessageGenerator.h \
+  NumberTools.h
 HandshakeGenerator.o: HandshakeGenerator.cc \
   HandshakeGenerator.h \
   commons.h
 NodeAddress.o: NodeAddress.cc \
-  NodeAddress.h
+  NodeAddress.h \
+  commons.h
 Node.o: Node.cc \
   NodeManager.h \
   ConnectionManager.h \
   DataManager.h \
   Switch.h \
   HandshakeGenerator.h \
+  NodeAddress.h \
   commons.h \
   PeersConnected.h \
   ActiveConnections.h \
@@ -305,10 +311,11 @@ Node.o: Node.cc \
   ChokeRandom.h \
   SingleActive.h \
   NumberTools.h \
-  NodeAddress.h
+  Choke.h
 NodeManager.o: NodeManager.cc \
   NodeManager.h \
   HandshakeGenerator.h \
+  NodeAddress.h \
   commons.h
 NumberTools.o: NumberTools.cc \
   NumberTools.h
@@ -316,7 +323,8 @@ PeerBean.o: PeerBean.cc \
   PeerBean.h
 PeerMessageGenerator.o: PeerMessageGenerator.cc \
   PeerMessageGenerator.h \
-  commons.h
+  commons.h \
+  NumberTools.h
 PeersConnected.o: PeersConnected.cc \
   PeersConnected.h
 PeersHandshake.o: PeersHandshake.cc \
