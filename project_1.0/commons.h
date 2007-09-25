@@ -46,6 +46,7 @@ static const unsigned int MSG_UNCHOKED = 9;
 static const unsigned int MSG_REQUEST = 10;
 
 
+static const unsigned int MSG_HAVE = 11;
 
 // LOCAL SUBMODULES SELF-MESSAGES
 // scheduled by Data manager to start requests for blocks

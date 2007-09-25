@@ -181,7 +181,6 @@ void DataManager::handleMessage(cMessage *msg)
 				// periodically generate requests			
 				//scheduleGenerateRequest();
 			}
-
 		}
 	}
 }

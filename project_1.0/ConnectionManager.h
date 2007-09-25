@@ -1,6 +1,7 @@
 #ifndef CONNECTIONMANAGER_H_
 #define CONNECTIONMANAGER_H_
 
+#include <assert.h>
 #include <string>
 #include <omnetpp.h>
 #include "HandshakeGenerator.h"
@@ -52,7 +53,9 @@ class ConnectionManager:    public cSimpleModule,
 		void msgNotInterested(NodeMessage* myMsg);
 		void msgChoked(NodeMessage* myMsg);
 		void msgUnchoked(NodeMessage* myMsg);
-
+		void msgHave(NodeMessage* myMsg);
+		void msgRequest(NodeMessage* myMsg);
+		
 	protected:
 		virtual void initialize();
 		virtual void handleMessage(cMessage *msg);
