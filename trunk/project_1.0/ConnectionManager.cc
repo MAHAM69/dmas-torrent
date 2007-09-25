@@ -5,6 +5,8 @@ Define_Module(ConnectionManager);
 
 void ConnectionManager::initialize()
 {
+	freeUploadSlots = NO_UPLOADS;
+	
 	strcpy(peerName,par("peer_name"));
 	
 	// initialize active connections - maximum number of 
@@ -255,18 +257,24 @@ void ConnectionManager::msgInterested(NodeMessage* myMsg)
     ChokeRandom* choke = new ChokeRandom();
     NodeMessage* response = new NodeMessage();
 
-    //TODO: wiadomosc typu MSG_INTERESTED ma miec pole ID zawierajace id wysylajacego    
-    //response->setDestination(myMsg->par("ID"));
-    if (choke->choked())
+    PeerToPeerMessage* p2pMsg = check_and_cast <PeerToPeerMessage*>(myMsg);
+    
+    if (p2pMsg)
     {
-	response->setType(MSG_CHOKED);
+	response->setDestination(p2pMsg->getSender());
+	if ((choke->choked()) && (!(freeUploadSlots > 0)))
+	{
+	    response->setType(MSG_CHOKED);
+	}
+	else
+	{
+	    //TODO: gdzies trzeba zwalniac sloty...
+	    //pytanie gdzie :)
+	    freeUploadSlots--;
+	    response->setType(MSG_UNCHOKED);
+	}
+	send(response,"nodeOut");	
     }
-    else
-    {
-	response->setType(MSG_UNCHOKED);
-    }
-    send(response,"nodeOut");	
-
     delete myMsg;
 }
 

@@ -34,7 +34,9 @@ class ConnectionManager:    public cSimpleModule,
 		
 		// list of active connections		
 		ActiveConnections* activeConnections;
-		
+
+		//number of free upload slots
+		int freeUploadSlots;		
 		
 		void handleHandshake(NodeHandshakeMessage* myHandshakeMsg);
 		void handleHandshakeResponse(NodeHandshakeMessage* myHandshakeMsg);

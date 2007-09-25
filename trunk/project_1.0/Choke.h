@@ -2,8 +2,9 @@
 #define CHOKE_H
 
 #include "NumberTools.h"
+#include "commons.h"
 
-//abstrakcyjna klasa Choke - z niej dziedzicza
+//klasa Choke - z niej dziedzicza
 //klasy implementujace algorytmy Choke
 class Choke :
 	public cNumberTools
@@ -11,6 +12,8 @@ class Choke :
     public:
     
     virtual bool choked() = 0;
+    
+    
 };
 
 #endif
