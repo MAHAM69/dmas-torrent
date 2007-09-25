@@ -38,6 +38,10 @@ void ConnectionManager::handleMessage(cMessage *msg)
     }
     else if ( strcmp( msg->name(), MSG_TRACKER_RESPONSE ) == 0 )
     {
+    	
+    	// temporarly, so that the simulation can continue; send handshake to some nodes;
+    	send(msg,"nodeManagerOut");
+    	
     }
     else
     {
