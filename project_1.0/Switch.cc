@@ -24,7 +24,6 @@ void Switch::handleMessage(cMessage *msg)
 
 	    // check which gate corresponds to the receiver
 	    int port = nodeAddress(dest);
-	    cout << "port = " << port << endl;
 	    send( msg, "out", port );
 	    
 	}
