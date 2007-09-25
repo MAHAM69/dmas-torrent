@@ -6,6 +6,7 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include "StringConvert.h"
 #include "NodeMessage_m.h"
 #include "commons.h"
 #include "PeerMessageGenerator.h"
@@ -16,9 +17,11 @@ using namespace std;
  *
  */
 class DataManager : public cSimpleModule,
-					public PeerMessageGenerator
+		    public PeerMessageGenerator,
+		    public StringConvert
 {
     private:
+	string nodeName;
     
     	/**
     	 * clas for storing information about peers bitfields

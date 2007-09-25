@@ -1,5 +1,6 @@
 simple ConnectionManager
     parameters:
+	peerId : numeric,
 	peer_name : string;
 		
     gates:

@@ -15,8 +15,7 @@ using namespace std;
 
 class Tracker : public cSimpleModule,
 		public NodeAddress,
-	        public CVSParser,
-	        public StringConvert
+	        public CVSParser
 {
     private:
 	int ID;

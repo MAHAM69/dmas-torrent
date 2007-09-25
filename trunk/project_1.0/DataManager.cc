@@ -5,12 +5,18 @@ Define_Module(DataManager);
 
 void DataManager::initialize()
 {
+    // Creating node name.
+    int peerId = par("peerId");
+    strcpy( peerName, par("peer_name") );
+    oss << peerName << peerId;
+    string s = oss.str();
+    oss.str("");
+    strcpy( peerName, nodeName.c_str() );
 
 	// initialize randomization	
 	srand((unsigned)time(0) + id()); 	
 
 	connectionEstablished = false;
-	strcpy(peerName, par("peer_name"));
 	// here be receiving number of blocks of torrent from node manager 
 	// for testing purposes only, number of blocks set to 20
 	blocksNumber = 20;

@@ -5,16 +5,17 @@ Define_Module(NodeManager);
 
 void NodeManager::initialize()
 {
-    // initialize randomization	
-    srand((unsigned)time(0) + id()); 
-
-	// get peer name	
-	strcpy(peerName, par("peer_name"));
-
-    // Get peer name to string variable.	
-    oss << peerName; //<< par("peer_name");
+    // Creating node name.
+    int peerId = par("peerId");
+    strcpy( peerName, par("peer_name") );
+    oss << peerName << peerId;
     nodeName = oss.str();
     oss.str("");
+    strcpy( peerName, nodeName.c_str() );
+
+
+    // initialize randomization	
+    srand((unsigned)time(0) + id()); 
 
 	// NodeManager::initialize is supposed to: simulate reading of .torrent file,
 	// setting peer name, sending GET to tracker and reading tracker's response, sending handshake to known peers
@@ -129,7 +130,6 @@ void NodeManager::receiveTrackerResponse( cMessage *msg )
     {
 	string *value = new string("");
 	parse( cvs, *value, rest );
-	cout << cvs << endl;
 #ifdef DEBUG
         ev << "i=" << i << "   value: " << *value << endl;
 #endif

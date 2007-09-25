@@ -1,5 +1,6 @@
 simple NodeManager
     parameters:
+	peerId : numeric,
 	peer_name : string;
 
     gates:
