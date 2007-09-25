@@ -10,6 +10,9 @@
 #define TRACKER_PORT 0
 #define ACTIVE_PEER  1
 
+// default piece size 16kB
+#define PIECE_SIZE 16
+
 
 // constants used as addresses in internal node communication
 static const unsigned int NODE_MANAGER = 0;

@@ -30,6 +30,15 @@ void DataManager::initialize()
 	}
 	bitfield[blocksNumber] = '\0';	
 	
+	
+	// initialize with empty blocks, standard size 256kB each
+	for(unsigned int i =0; i < blocksNumber; i++)
+	{
+		SingleBlock bl(i,256);
+		blocks.push_back(bl);
+	}
+	
+	
 	// at first, copy bitfield to the currentBitfield, as -initially-they are the same
 	currentBitfield = new char(blocksNumber +1);
 	
@@ -54,6 +63,7 @@ void DataManager::initialize()
 	currentBitfield[blocksNumber] = '\0';
 	
 	requestsStarted = false;
+		
 }
 
 void DataManager::handleMessage(cMessage *msg)
@@ -140,20 +150,19 @@ void DataManager::handleMessage(cMessage *msg)
 				//whichBlock==-1 means that no blocks to download left
 				if(whichBlock > -1)
 				{
+					
 					// checking which peer posses the required block
 					char* peerOfInterest = findPeer(whichBlock);
 					
 					// generate request message
-					SingleBlock seekedBlock = blocks[whichBlock];
-					unsigned int ala = seekedBlock.getOffset();
 					unsigned int offset = blocks[whichBlock].getOffset();
 					unsigned int requestedLength = 0;
 					
 					// specifies how many kB left to finish downloading of a torrent
 					int bytesLeft = blocks[whichBlock].getBlockSize() - blocks[whichBlock].getOffset() ;
 					
-					if(bytesLeft > 16)
-						requestedLength = 16;
+					if(bytesLeft > PIECE_SIZE)
+						requestedLength = PIECE_SIZE;
 					else
 						requestedLength = bytesLeft;
 					
@@ -162,8 +171,11 @@ void DataManager::handleMessage(cMessage *msg)
 					//generateRequestMessage;
 					
 					PeerToPeerMessage* requestMessage= generateRequestMessage(peerOfInterest,peerName,payload);
-					send(requestMessage,"connectionManagerOut");
 					
+					//shall be:
+					//send(requestMessage,"connectionManagerOut");
+					
+					ev << "generated request from: " << requestMessage->getSender() << " to "<< requestMessage->getDestination() << '\n';						
 				}
 				
 				// periodically generate requests			
@@ -251,24 +263,24 @@ int DataManager::chooseBlock()
 
 char* DataManager::requestIntToChar(int blockIndex, int offset, int pieceLength)
 {
-	char payload[12];
+	char* payload = new char[12];
 	char buffer[4];
-	string* strBuf;
+	string strBuf;
 	
-	strBuf = & int2str(blockIndex,0);
-	strcpy(buffer,strBuf->c_str());
+	strBuf = int2str(blockIndex,0);
+	strcpy(buffer,strBuf.c_str());
 	
 	for(int i=0; i <4; i++)
 		payload[i] = buffer[i];
 	
-	strBuf = &int2str(offset,0);
-	strcpy(buffer,strBuf->c_str());
+	strBuf = int2str(offset,0);
+	strcpy(buffer,strBuf.c_str());
 	
 	for(int i=0; i <4; i++)
 		payload[4+i] = buffer[i];
 	
-	strBuf = &int2str(pieceLength,0);
-	strcpy(buffer,strBuf->c_str());
+	strBuf = int2str(pieceLength,0);
+	strcpy(buffer,strBuf.c_str());
 	
 	for(int i=0; i <4; i++)
 		payload[8+i] = buffer[i];
@@ -278,7 +290,7 @@ char* DataManager::requestIntToChar(int blockIndex, int offset, int pieceLength)
 
 int* DataManager::requestCharToInt(char* payload)
 {
-	int intValues[3];
+	int* intValues = new int[3];
 	string* strBuf;
 	char buffer[4];
 	
@@ -306,7 +318,7 @@ int* DataManager::requestCharToInt(char* payload)
 
 char* DataManager::findPeer(int block)
 {
-	char searchedPeer[20];
+	char* searchedPeer = new char[20];
 	//peers that posseses requested block
 	vector<char*> potentialPeers;
 	
@@ -320,8 +332,7 @@ char* DataManager::findPeer(int block)
 	}	
 	
 	if(potentialPeers.size() > 0)
-	{
-		int size = potentialPeers.size() ; 
+	{		
 		int randomPeer = rand() % potentialPeers.size() ;
 		strcpy(searchedPeer, potentialPeers[randomPeer] );
 		return searchedPeer;
