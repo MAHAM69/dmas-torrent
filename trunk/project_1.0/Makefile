@@ -84,7 +84,7 @@ MSGCOPTS= $(INCLUDE_PATH)
 SUBDIRS= 
 
 # object files in this directory
-OBJS= ConnectionManager_n.o DataManager_n.o NodeManager_n.o Node_n.o NodeNet_n.o Switch_n.o Tracker_n.o NodeHandshakeMessage_m.o NodeMessage_m.o P2PMessage_m.o RequestMessage_m.o TrackerResponse_m.o ActiveConnections.o ChokeRandom.o ConnectionManager.o CVSParser.o DataManager.o HandshakeGenerator.o NodeAddress.o Node.o NodeManager.o NumberTools.o PeerBean.o PeerMessageGenerator.o PeersConnected.o PeersHandshake.o PeersMessage.o SingleActive.o Switch.o Tracker.o
+OBJS= ConnectionManager_n.o DataManager_n.o NodeManager_n.o Node_n.o NodeNet_n.o Switch_n.o Tracker_n.o NodeHandshakeMessage_m.o NodeMessage_m.o P2PMessage_m.o RequestMessage_m.o TrackerResponse_m.o ActiveConnections.o ConnectionManager.o CVSParser.o DataManager.o HandshakeGenerator.o NodeAddress.o Node.o NodeManager.o NumberTools.o PeerBean.o PeerMessageGenerator.o PeersConnected.o PeersHandshake.o PeersMessage.o SingleActive.o Switch.o Tracker.o
 
 # header files generated (from msg files)
 GENERATEDHEADERS= NodeHandshakeMessage_m.h NodeMessage_m.h P2PMessage_m.h RequestMessage_m.h TrackerResponse_m.h
@@ -180,9 +180,6 @@ TrackerResponse_m.cc TrackerResponse_m.h: TrackerResponse.msg
 ActiveConnections.o: ActiveConnections.cc
 	$(CXX) -c $(COPTS) ActiveConnections.cc
 
-ChokeRandom.o: ChokeRandom.cc
-	$(CXX) -c $(COPTS) ChokeRandom.cc
-
 ConnectionManager.o: ConnectionManager.cc
 	$(CXX) -c $(COPTS) ConnectionManager.cc
 
@@ -273,11 +270,6 @@ re-makemake-m: makefile-ins
 ActiveConnections.o: ActiveConnections.cc \
   ActiveConnections.h \
   SingleActive.h
-ChokeRandom.o: ChokeRandom.cc \
-  ChokeRandom.h \
-  Choke.h \
-  commons.h \
-  NumberTools.h
 ConnectionManager.o: ConnectionManager.cc \
   ConnectionManager.h \
   HandshakeGenerator.h \
@@ -285,10 +277,8 @@ ConnectionManager.o: ConnectionManager.cc \
   ActiveConnections.h \
   commons.h \
   PeerMessageGenerator.h \
-  ChokeRandom.h \
   SingleActive.h \
-  NumberTools.h \
-  Choke.h
+  NumberTools.h
 CVSParser.o: CVSParser.cc \
   CVSParser.h
 DataManager.o: DataManager.cc \
@@ -311,20 +301,19 @@ Node.o: Node.cc \
   NodeAddress.h \
   CVSParser.h \
   StringConvert.h \
+  NumberTools.h \
   commons.h \
   PeersConnected.h \
   ActiveConnections.h \
   PeerMessageGenerator.h \
-  ChokeRandom.h \
-  SingleActive.h \
-  NumberTools.h \
-  Choke.h
+  SingleActive.h
 NodeManager.o: NodeManager.cc \
   NodeManager.h \
   HandshakeGenerator.h \
   NodeAddress.h \
   CVSParser.h \
   StringConvert.h \
+  NumberTools.h \
   commons.h
 NumberTools.o: NumberTools.cc \
   NumberTools.h

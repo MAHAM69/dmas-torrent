@@ -5,6 +5,13 @@ Define_Module(ConnectionManager);
 
 void ConnectionManager::initialize()
 {
+
+	//scheduled message	
+	printf("CM init\n");
+	NodeMessage* scheduledMsg = new NodeMessage();
+	scheduledMsg->setType(MSG_SCHEDULED_CHOKE);
+	scheduleAt(simTime()+10, scheduledMsg);
+	
 	freeUploadSlots = NO_UPLOADS;
 	
 	strcpy(peerName,par("peer_name"));
@@ -55,8 +62,7 @@ void ConnectionManager::handleMessage(cMessage *msg)
 		// ConnectionManager as the only submodule of a peer has to check whether the incoming message
 		// is own message or external message since it is the only one connection both externaly with 
 		// the outside and internally with submodules of the same peer		
-		int ownMessage = strcmp(myMsg->getDestination(), peerName);	
-		
+		int ownMessage = strcmp(myMsg->getDestination(), peerName);		
 		if (ownMessage != 0)
 		{
 			// message is own message (destination is not this peer )						
@@ -108,15 +114,16 @@ void ConnectionManager::handleMessage(cMessage *msg)
 			    
 			    case MSG_HAVE:
 				msgHave(myMsg);
-				break;			    
-				
-			    case MSG_REQUEST:
-			    msgRequest(myMsg);
-			    break;
+				break;
 			    
-			    case MSG_PIECE:
-			    msgPiece(myMsg);
-			    break;
+			    case MSG_REQUEST:
+				msgRequest(myMsg);
+				break;
+				
+			    case MSG_SCHEDULED_CHOKE:
+				ev << "weszlo" << endl;
+				msgScheduledChoke(myMsg);
+				break;
 				
 			    default:
 				break;    
@@ -268,7 +275,6 @@ void ConnectionManager::msgInterested(NodeMessage* myMsg)
 #ifdef DEBUG
 	ev << "msgInterested    message name: " << ((myMsg != NULL) ? myMsg->name() : "NULL") << endl;
 #endif
-    ChokeRandom* choke = new ChokeRandom();
     NodeMessage* response = new NodeMessage();
 
     PeerToPeerMessage* p2pMsg = check_and_cast <PeerToPeerMessage*>(myMsg);
@@ -276,37 +282,35 @@ void ConnectionManager::msgInterested(NodeMessage* myMsg)
     if (p2pMsg)
     {
 	response->setDestination(p2pMsg->getSender());
-	if ((choke->choked()) && (!(freeUploadSlots > 0)))
-	{
-	    int i=0;
-	    
-	    for (i=0; i<connectionsList.size();i++)
+        int i=0;
+    	    
+        for (i=0; i<connectionsList.size();i++)
+        {
+	    if (strcmp(connectionsList[i].getPeerName(), p2pMsg->getSender()) == 0)
 	    {
-		if (strcmp(connectionsList[i].getPeerName(), p2pMsg->getSender()) == 0)
-		{
-		    connectionsList[i].setPeerChoking(true);
-		    break;
-		}
+		connectionsList[i].setPeerChoking(true);
+		break;
 	    }
-	    response->setType(MSG_CHOKED);
 	}
-	else
-	{
-	    int i=0;
-	    
-	    for (i=0; i<connectionsList.size();i++)
-	    {
-		if (strcmp(connectionsList[i].getPeerName(), p2pMsg->getSender()) == 0)
-		{
-		    connectionsList[i].setPeerInterested(true);
-		    break;
-		}
-	    }
-	    freeUploadSlots--;
-	    response->setType(MSG_UNCHOKED);
-	}
-	send(response,"nodeOut");	
+	response->setType(MSG_CHOKED);
     }
+    else
+    {
+        int i=0;
+	    
+        for (i=0; i<connectionsList.size();i++)
+        {
+	    if (strcmp(connectionsList[i].getPeerName(), p2pMsg->getSender()) == 0)
+	    {
+		connectionsList[i].setPeerInterested(true);
+		break;
+	    }
+	}
+	freeUploadSlots--;
+	response->setType(MSG_UNCHOKED);
+    }
+    send(response,"nodeOut");	
+    
     delete myMsg;
 }
 
@@ -332,39 +336,34 @@ void ConnectionManager::msgUnchoked(NodeMessage* myMsg)
 	ev << "msgUnchoked    message name: " << ((myMsg != NULL) ? myMsg->name() : "NULL") << endl;
 #endif
     
-    NodeMessage *toDM = new NodeMessage();
-    toDM->setType(MSG_START_REQUESTS);
-    send(toDM, "dataManagerOut");
-    //delete myMsg;
+    PeerToPeerMessage* toSend = new PeerToPeerMessage();//wiadomosc do wyslania
+    PeerToPeerMessage* temp = check_and_cast<PeerToPeerMessage*>(myMsg);
+    int index;//index wektora connectionsList
+    
+    toSend->setDestination(myMsg->getDestination());
+    
+    //wyszukanie kanalu odpowiadajacego wylosowanej wiadomosci
+    for (int i=0;i<connectionsList.size();i++)
+    {
+	if (strcmp(connectionsList[i].getPeerName(), temp->getDestination()) == 0)
+	{
+	    index = i;
+	    break;
+	}
+    }
+    connectionsList[index].setPeerChoking(false);
+    for (int i=0;i<requestList.size();i++)
+    {
+	if (strcmp((check_and_cast<NodeMessage*>(requestList[i]))->getDestination(), temp->getDestination()) == 0)
+	{
+	    index = i;
+	    break;
+	}
+    }
+    toSend->setType(MSG_REQUEST);
+    toSend->setDestination(temp->getDestination());
+    send(requestList[index], "nodeOut");
 }
-
-/*
-<<<<<<< .mine
-
-// method identical to msgUnchoked...
-void ConnectionManager::msgRequest(NodeMessage* myMsg){
-	
-#ifdef DEBUG
-	ev << "msgRequest    message name: " << ((myMsg != NULL) ? myMsg->name() : "NULL") << endl;
-#endif
-	
-	send(myMsg, "dataManagerOut");
-	// it CANNOT be deleted
-}
-=======
-*/
-
-// method identical to msgUnchoked...
-void ConnectionManager::msgPiece(NodeMessage* myMsg){
-	
-#ifdef DEBUG
-	ev << "msgPiece    message name: " << ((myMsg != NULL) ? myMsg->name() : "NULL") << endl;
-#endif
-	
-	send(myMsg, "dataManagerOut");
-	// it CANNOT be deleted
-}
-
 
 void ConnectionManager::msgHave(NodeMessage* myMsg)
 {
@@ -376,16 +375,10 @@ void ConnectionManager::msgHave(NodeMessage* myMsg)
 
     int i=0;
     
-    PeerToPeerMessage* p2pMsg = check_and_cast <PeerToPeerMessage*>(myMsg);
-    assert(p2pMsg);
-        for (i=0; i<connectionsList.size();i++)
-	{
-	    if (strcmp(connectionsList[i].getPeerName(), p2pMsg->getSender()) == 0)
-	    {
-		connectionsList[i].setPeerInterested(false);
-		break;
-	    }
-	}//end for
+    NodeMessage* nodeMsg = new NodeMessage();
+    
+    nodeMsg->setType(MSG_START_REQUESTS);
+    send(nodeMsg, "dataManagerOut");
     
 }
 
@@ -395,13 +388,78 @@ void ConnectionManager::msgRequest(NodeMessage* myMsg)
 	ev << "msgRequest    message name: " << ((myMsg != NULL) ? myMsg->name() : "NULL") << endl;
 #endif
 
-    PeerToPeerMessage* p2pMsg = check_and_cast <PeerToPeerMessage*>(myMsg);
-    assert(p2pMsg);
-    //przesylanie dalej msgRequest - jak przyszlo z sieci 
-    //to idzie do DM, jak z DM to idzie w siec
-    if (p2pMsg->arrivedOn("nodeIn"))
-	send(p2pMsg, "dataManagerOut");
+    PeerToPeerMessage* temp = check_and_cast<PeerToPeerMessage*>(myMsg);
+    PeerToPeerMessage* toSend = new PeerToPeerMessage();
+    int index = 0;
+    
+    if (myMsg->arrivedOn("DataManagerIn"))
+    {
+	addRequest(myMsg);
+	
+	for (int i=0;i<connectionsList.size();i++)
+	{
+	    if (strcmp(connectionsList[i].getPeerName(), temp->getDestination()) == 0)
+	    {
+		index = i;
+		break;
+	    }
+	}
+	connectionsList[index].setPeerChoking(true);
+	if (!connectionsList[index].getAmInterested())
+	{
+	    connectionsList[index].setAmInterested(true);
+	    toSend->setType(MSG_INTERESTED);
+	    toSend->setDestination(myMsg->getDestination());
+	}
+    }
     else
-	send(p2pMsg, "nodeOut");    
+	send(myMsg, "dataManagerOut");
+	
 }
 
+void ConnectionManager::chokeRandom()
+{
+#ifdef DEBUG
+	ev << "chokeRandom " << endl;
+#endif
+    NodeMessage *x = new NodeMessage();
+
+    PeerToPeerMessage* toSend = new PeerToPeerMessage();//wiadomosc do wyslania
+
+    
+    int rnd = getRandomInt(requestList.size());//index wektora requestList
+    int index;//index wektora connectionsList
+    
+    NodeMessage* temp = requestList[rnd];
+    
+    toSend->setDestination((check_and_cast<NodeMessage*>(temp))->getDestination());
+    
+    //wyszukanie kanalu odpowiadajacego wylosowanej wiadomosci
+    for (int i=0;i<connectionsList.size();i++)
+    {
+	if (strcmp(connectionsList[i].getPeerName(), temp->getDestination()) == 0)
+	{
+	    index = i;
+	    break;
+	}
+    }
+
+    //ustawianie flag
+    if (!connectionsList[index].getAmInterested())
+    {
+	connectionsList[index].setPeerInterested(true);
+	toSend->setType(MSG_INTERESTED);
+    }
+    send(toSend, "nodeOut");
+}
+
+
+void ConnectionManager::msgScheduledChoke(NodeMessage* msg)
+{
+#ifdef DEBUG
+	ev << "msgScheduledChoke " << endl;
+#endif
+    printf("msgScheduledChoke\n");
+    chokeRandom();
+    scheduleAt(simTime()+10, msg);
+}
