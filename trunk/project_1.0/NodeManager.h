@@ -5,7 +5,9 @@
 #include <omnetpp.h>
 #include <iostream>
 #include "HandshakeGenerator.h"
+#include "NodeAddress.h"
 #include "NodeHandshakeMessage_m.h"
+#include "RequestMessage_m.h"
 #include "commons.h"
 
 using namespace std;
@@ -14,7 +16,8 @@ using namespace std;
  *
  */
 class NodeManager : public cSimpleModule,
-		    public HandshakeGenerator
+		    public HandshakeGenerator,
+		    public NodeAddress
 {
     private: 
 	/** peers list received from tracker */

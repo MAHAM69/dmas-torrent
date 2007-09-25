@@ -1,11 +1,13 @@
 cplusplus {{
 #include "PeerBean.h"
+#include "NodeMessage_m.h"
 #include "commons.h"
 }};
 
 class noncobject PeerBean;
+class NodeMessage;
 
-message TrackerResponse
+message TrackerResponse extends NodeMessage
 {
     fields:
 	double interval;

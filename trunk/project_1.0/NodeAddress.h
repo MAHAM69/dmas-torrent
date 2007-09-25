@@ -2,6 +2,7 @@
 #define NODEADDRESS_H_
 
 #include <string>
+#include "commons.h"
 
 class NodeAddress
 {

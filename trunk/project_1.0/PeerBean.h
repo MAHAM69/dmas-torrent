@@ -21,15 +21,16 @@ public:
     PeerBean( PeerBean* );
     virtual ~PeerBean();
     char* getHash();
-    void setHash( char* );
+    void setHash( const char* );
     char* getID();
-    void setID( char* );
+    void setID( const char* );
     double getIp();
-    void setIp( double );
+    void setIp( const double );
     int getPort();
-    void setPort( int );
+    void setPort( const int );
     double getLeft();
-    void setLeft( double );
+    void setLeft( const double );
+    PeerBean& operator =(const PeerBean&);
 };
 
 #endif /**PEERBEAN_H_*/

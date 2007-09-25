@@ -4,10 +4,38 @@ Define_Module(Switch);
 
 void Switch::handleMessage(cMessage *msg)
 {
-	NodeMessage* myMsg = NULL;
-	myMsg = check_and_cast<NodeMessage *>(msg);
-	if(myMsg != NULL)
+#ifdef DEBUG
+	ev << "handleMessage    message name: " << ((msg != NULL) ? msg->name() : "NULL") << endl;
+#endif
+
+	if ( strcmp( msg->name(), MSG_GET ) == 0)
 	{
+	    send(msg, "out", 0);
+	} 
+	else if ( strcmp( msg->name(), MSG_TRACKER_RESPONSE ) == 0 )
+	{
+	    TrackerResponse* myMsg = NULL;
+	    myMsg = check_and_cast<TrackerResponse *>(msg);
+	    const char* dest = myMsg->getDestination();
+	    char bubel[50];
+	    strcpy(bubel, "tracker response to\n");
+	    strcat(bubel, myMsg->getDestination());
+	    bubble(bubel);
+
+	    // check which gate corresponds to the receiver
+	    int port = nodeAddress(dest);
+	    cout << "port = " << port << endl;
+	    send( msg, "out", port );
+	    
+//	    delete msg;
+//	    return;
+	}
+	else
+	{
+	    NodeMessage* myMsg = NULL;
+	    myMsg = check_and_cast<NodeMessage *>(msg);
+	    if(myMsg != NULL)
+	    {
 		const char* dest = myMsg->getDestination();
 		
 		char bubel[50];
@@ -20,5 +48,6 @@ void Switch::handleMessage(cMessage *msg)
 		// check which gate corresponds to the receiver
 		int port = nodeAddress(dest);		
 		send(myMsg,"out",port);
+	    }
 	}
 }
