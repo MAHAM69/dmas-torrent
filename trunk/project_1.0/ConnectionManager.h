@@ -53,9 +53,12 @@ class ConnectionManager:    public cSimpleModule,
 		void msgNotInterested(NodeMessage* myMsg);
 		void msgChoked(NodeMessage* myMsg);
 		void msgUnchoked(NodeMessage* myMsg);
+
+		void msgPiece(NodeMessage* myMsg);
+
 		void msgHave(NodeMessage* myMsg);
 		void msgRequest(NodeMessage* myMsg);
-		
+
 	protected:
 		virtual void initialize();
 		virtual void handleMessage(cMessage *msg);

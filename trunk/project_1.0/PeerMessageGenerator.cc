@@ -7,7 +7,7 @@
  */ 
 PeerToPeerMessage* PeerMessageGenerator::generateBitfieldMessage(char* destination, char* sender)
 {
-	PeerToPeerMessage* peerMessage = new PeerToPeerMessage();
+	PeerToPeerMessage* peerMessage = new PeerToPeerMessage("Bitfield message");
 	
 	// '5' in bitTorrent spec corresponds to Bitfield message  
 	peerMessage->setMessageId(5);
@@ -41,7 +41,7 @@ void PeerMessageGenerator::generateBitfieldMessage( PeerToPeerMessage* peerMessa
 
 PeerToPeerMessage* PeerMessageGenerator::generateResponseForBitfieldMessage(PeerToPeerMessage* msgToRespond, char* bitfield, char* sender)
 {
-	PeerToPeerMessage* responseMsg = new PeerToPeerMessage();
+	PeerToPeerMessage* responseMsg = new PeerToPeerMessage("Bitfield response");
 	
 	unsigned int bitfieldLen = strlen(bitfield);
 	
@@ -68,7 +68,7 @@ PeerToPeerMessage* PeerMessageGenerator::generateResponseForBitfieldMessage(Peer
 
 PeerToPeerMessage* PeerMessageGenerator::generateRequestMessage(char* destination, char* sender, char* payload)
 {
-	PeerToPeerMessage* peerMsg = new PeerToPeerMessage();
+	PeerToPeerMessage* peerMsg = new PeerToPeerMessage("Request");
 	
 	peerMsg->setDestination(destination);
 	peerMsg->setSender(sender);
@@ -82,5 +82,22 @@ PeerToPeerMessage* PeerMessageGenerator::generateRequestMessage(char* destinatio
 		peerMsg->setPayload(i,payload[i]);
 	
 	return peerMsg;
+}
+
+PeerToPeerMessage* PeerMessageGenerator::generatePieceMessage(char* destination, char* sender, char* payload, unsigned int payloadLen){
+	PeerToPeerMessage* pieceMsg = new PeerToPeerMessage("Piece");
+	
+	pieceMsg->setMessageId(7);
+	pieceMsg->setDestination(destination);
+	pieceMsg->setSender(sender);
+	pieceMsg->setLength(payloadLen+1);
+	pieceMsg->setType(MSG_PIECE);
+	
+	pieceMsg->setPayloadArraySize(payloadLen);
+	
+	for(int i =0;i<payloadLen;i++)
+		pieceMsg->setPayload(i,payload[i]);
+	
+	return pieceMsg;
 }
 

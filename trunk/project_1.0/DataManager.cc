@@ -31,11 +31,33 @@ void DataManager::initialize()
 	bitfield[blocksNumber] = '\0';	
 	
 	
+	// make node4 a seed
+	if(strcmp(peerName,"node4") == 0)
+	{
+		for(unsigned int i =0; i < blocksNumber; i++)
+		{		
+			bitfield[i] = 'y';
+		}
+		bitfield[blocksNumber] = '\0';	
+	}
+	
+	
 	// initialize with empty blocks, standard size 256kB each
 	for(unsigned int i =0; i < blocksNumber; i++)
 	{
-		SingleBlock bl(i,256);
-		blocks.push_back(bl);
+		
+		if( bitfield[i] == 'y')
+		{
+			SingleBlock bl(i,256,256);
+			blocks.push_back(bl);
+		}
+		else
+		{
+			SingleBlock bl(i,256);
+			blocks.push_back(bl);
+		}
+			
+		
 	}
 	
 	
@@ -142,7 +164,6 @@ void DataManager::handleMessage(cMessage *msg)
 					}
 				}
 			}
-
 			else if (myMsg->getType() == MSG_START_REQUESTS)
 			{
 				int whichBlock= chooseBlock();
@@ -171,15 +192,103 @@ void DataManager::handleMessage(cMessage *msg)
 					//generateRequestMessage;
 					
 					PeerToPeerMessage* requestMessage= generateRequestMessage(peerOfInterest,peerName,payload);
+										
+					send(requestMessage,"connectionManagerOut");
 					
-					//shall be:
-					//send(requestMessage,"connectionManagerOut");
+					printBitfield();
+					ev << peerName << " requesting block number " << whichBlock << " of size " << requestedLength
+						<< " from " <<  requestMessage->getDestination() << endl;
+					//ev << "generated request from: " << requestMessage->getSender() << " to "<< requestMessage->getDestination() << '\n';
 					
-					ev << "generated request from: " << requestMessage->getSender() << " to "<< requestMessage->getDestination() << '\n';						
+					// periodically generate requests - temporarly			
+					scheduleGenerateRequest();
+				}
+				else
+					ev << peerName << " HAS COMPLETED DOWNLOAD!\n";
+				
+				
+			}
+
+			else if (myMsg->getType() == MSG_REQUEST)
+			{
+				// received request for block; generate piece message and send back								
+				PeerToPeerMessage* requestMsg = check_and_cast<PeerToPeerMessage*> (myMsg);
+				
+				char destination[20];
+				strcpy(destination,requestMsg->getSender() );
+				
+				char requestPayload[12];
+				
+				for(unsigned int i =0; i < 12; i++)
+				{
+					requestPayload[i] = requestMsg->getPayload(i);
 				}
 				
-				// periodically generate requests			
-				//scheduleGenerateRequest();
+				// block index, offset, size of piece from request
+				int* requestValues = requestCharToInt(requestPayload);
+				int pieceIndex = requestValues[0];
+				int pieceOffset = requestValues[1];
+				int pieceLen= requestValues[2];
+				
+				// size of paylaod for piece msg
+				// payload of piece is piece length +8 bytes
+				unsigned int payloadLen = pieceLen+8;
+				 
+				char* payload = new char[payloadLen];
+				
+				// 8 bytes of payload of request and piece are identical and may be copied, the rest is requested data
+				for(int i=0; i < 8; i++)
+				{
+					payload[i] = requestPayload[i];
+				}
+								
+				
+				PeerToPeerMessage* pieceMsg = generatePieceMessage(destination,peerName,payload,payloadLen);
+				send(pieceMsg,"connectionManagerOut");
+				
+			}
+			else if(myMsg->getType() == MSG_PIECE)
+			{
+				// received piece from peer, add this piece to downloaded blocks
+				PeerToPeerMessage* pieceMsg = check_and_cast<PeerToPeerMessage*> (myMsg);
+				
+				unsigned int pieceLen = pieceMsg->getLength() -9;
+				char *payload = new char[8];
+				
+				// copying index and offset from payload 
+				for(int i=0; i < 8;i++)
+				{
+					payload[i] = pieceMsg->getPayload(i);
+				}
+				
+				int* blockParamters= pieceCharToInt(payload);
+				int blockIndex = blockParamters[0];				
+				
+				
+				// set currentBitfield[blockIndex] as 'n', as it is not downloading anymore
+				currentBitfield[blockIndex] = 'n';
+				
+				blocks[blockIndex].addPiece(pieceLen);
+				
+				// check if block is completed
+				int currentOffset = blocks[blockIndex].getOffset() ;
+				int currentBlockSize= blocks[blockIndex].getBlockSize();
+				
+				if( blocks[blockIndex].getOffset() ==  blocks[blockIndex].getBlockSize())
+				{
+					bitfield[blockIndex] = 'y';
+					currentBitfield[blockIndex] = 'y';
+				}				
+				
+				
+				delete[] blockParamters;
+				delete[] payload;
+				
+#ifdef DEBUG								
+				ev << peerName << " added piece " << pieceLen << " kB to block nr " << blockIndex << endl;
+				printBitfield();
+				printBlocks();				
+#endif
 			}
 		}
 	}
@@ -249,6 +358,9 @@ int DataManager::chooseBlock()
 		
 		blockNumber--;
 		
+		// set block in currentBitfield as downloaded, so that the same piece is not chosen twice
+		currentBitfield[blockNumber] = 'd';
+		
 		delete []blocksOfInterest;
 		return blockNumber;
 	}
@@ -315,6 +427,22 @@ int* DataManager::requestCharToInt(char* payload)
 	return intValues;
 }
 
+int* DataManager::pieceCharToInt(char* payload)
+{
+	int* intValues = new int[1];
+	string* strBuf;
+	char buffer[4];
+	
+	for(int i=0;i<4;i++)
+		buffer[i]=payload[i];
+	
+	strBuf = new string(buffer);
+	intValues[0] = str2int(*strBuf);
+	
+	delete strBuf;
+	return intValues;
+}
+
 char* DataManager::findPeer(int block)
 {
 	char* searchedPeer = new char[20];
@@ -340,4 +468,32 @@ char* DataManager::findPeer(int block)
 	{
 		return NULL;
 	}					
+}
+
+void DataManager::printBitfield()
+{
+	ev << peerName << " bitfield\n";
+	for (unsigned int i=0; i < blocksNumber; i++)
+	{
+		ev << "block " << i << ": " << bitfield[i] << " ";
+	}	
+	ev << endl;
+	
+	ev << peerName << " current-bitfield\n";
+	for (unsigned int i=0; i < blocksNumber; i++)
+	{
+		ev << "block " << i << ": " << currentBitfield[i] << " ";
+	}	
+	ev << endl;
+}
+
+void DataManager::printBlocks()
+{
+	ev << peerName << " blocks:\n";
+	
+	for(unsigned int i=0; i < blocksNumber; i++)
+	{
+		ev << "block " << blocks[i].getBlockNumber() << " offset: " << blocks[i].getOffset() << " blocksize: " << blocks[i].getBlockSize() << endl;
+	}
+	ev << endl;
 }

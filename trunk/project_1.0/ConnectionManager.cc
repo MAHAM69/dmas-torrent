@@ -55,7 +55,8 @@ void ConnectionManager::handleMessage(cMessage *msg)
 		// ConnectionManager as the only submodule of a peer has to check whether the incoming message
 		// is own message or external message since it is the only one connection both externaly with 
 		// the outside and internally with submodules of the same peer		
-		int ownMessage = strcmp(myMsg->getDestination(), peerName);		
+		int ownMessage = strcmp(myMsg->getDestination(), peerName);	
+		
 		if (ownMessage != 0)
 		{
 			// message is own message (destination is not this peer )						
@@ -107,10 +108,15 @@ void ConnectionManager::handleMessage(cMessage *msg)
 			    
 			    case MSG_HAVE:
 				msgHave(myMsg);
-				break;
-			    
+				break;			    
+				
 			    case MSG_REQUEST:
-				msgRequest(myMsg);
+			    msgRequest(myMsg);
+			    break;
+			    
+			    case MSG_PIECE:
+			    msgPiece(myMsg);
+			    break;
 				
 			    default:
 				break;    
@@ -332,6 +338,34 @@ void ConnectionManager::msgUnchoked(NodeMessage* myMsg)
     //delete myMsg;
 }
 
+/*
+<<<<<<< .mine
+
+// method identical to msgUnchoked...
+void ConnectionManager::msgRequest(NodeMessage* myMsg){
+	
+#ifdef DEBUG
+	ev << "msgRequest    message name: " << ((myMsg != NULL) ? myMsg->name() : "NULL") << endl;
+#endif
+	
+	send(myMsg, "dataManagerOut");
+	// it CANNOT be deleted
+}
+=======
+*/
+
+// method identical to msgUnchoked...
+void ConnectionManager::msgPiece(NodeMessage* myMsg){
+	
+#ifdef DEBUG
+	ev << "msgPiece    message name: " << ((myMsg != NULL) ? myMsg->name() : "NULL") << endl;
+#endif
+	
+	send(myMsg, "dataManagerOut");
+	// it CANNOT be deleted
+}
+
+
 void ConnectionManager::msgHave(NodeMessage* myMsg)
 {
 #ifdef DEBUG
@@ -370,3 +404,4 @@ void ConnectionManager::msgRequest(NodeMessage* myMsg)
     else
 	send(p2pMsg, "nodeOut");    
 }
+

@@ -62,6 +62,11 @@ class DataManager : public cSimpleModule,
     		offset = 0;
     	}
     	
+    	SingleBlock(unsigned int block_num,unsigned int block_size, unsigned int _offset): 
+    	    		blockNum(block_num), blockSize(block_size), offset(_offset)
+    	{    	    		
+    	}
+    	
     	unsigned int getBlockNumber(){
     		return blockNum;
     	}
@@ -71,6 +76,12 @@ class DataManager : public cSimpleModule,
     	}
     	unsigned int getOffset(){
     		return offset;
+    	}
+    	
+    	void addPiece(unsigned int data)
+    	{
+    		if( offset + data <= blockSize)
+    			offset += data;    		
     	}
     	    	
     };
@@ -99,6 +110,21 @@ class DataManager : public cSimpleModule,
      * finds peer that posses a block; if more than once peer posseses the block, it randomly choose one of them (behaviour compliant with torrent spec)
      */ 
      char* findPeer(int block);
+     
+     /**
+      * transforms first 8bytes to 2 integers, for piece message parsing
+      */ 
+     int* pieceCharToInt(char* payload);
+     
+     /**
+      * prints out its bitfield
+      */ 
+    void printBitfield();
+    
+    /**
+     * information about owned blocks of a node
+     */ 
+    void printBlocks();
     
     
 	bool connectionEstablished;
