@@ -42,6 +42,6 @@ config filtobjlist-order	{Class}
 inspector "examplaryNode" "NodeNet" "2" "357x411+671+254"
 inspector "singleNode.node1" "Node" "2" "357x315+1032+585"
 inspector "singleNode.node2" "Node" "2" "357x315+1032+239"
-inspector "singleNode" "NodeNet" "2" "357x208+1032+0"
 inspector "examplaryNode.node1.nodeManager." "NodeMessage" "1" "460x315+0+671"
+inspector "singleNode" "NodeNet" "2" "357x208+1032+0"
 
