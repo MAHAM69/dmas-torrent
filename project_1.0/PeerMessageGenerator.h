@@ -21,6 +21,7 @@ class PeerMessageGenerator : public cNumberTools
 		PeerToPeerMessage* generateResponseForBitfieldMessage(PeerToPeerMessage* msgToRespond, char* bitfield, char* sender);
 		
 		PeerToPeerMessage* generateRequestMessage(char* destnation, char* sender, char* payload);
+		PeerToPeerMessage* generatePieceMessage(char* destination, char* sender, char* payload, unsigned int payloadLen);
 };
 
 
