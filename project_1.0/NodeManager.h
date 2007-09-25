@@ -9,6 +9,7 @@
 #include "NodeAddress.h"
 #include "CVSParser.h"
 #include "StringConvert.h"
+#include "NumberTools.h"
 #include "NodeHandshakeMessage_m.h"
 #include "RequestMessage_m.h"
 #include "TrackerResponse_m.h"
@@ -23,7 +24,8 @@ class NodeManager : public cSimpleModule,
 		    public HandshakeGenerator,
 		    public NodeAddress,
 		    public CVSParser,
-		    public StringConvert
+		    public StringConvert,
+		    public cNumberTools
 {
     private: 
 	/** peers list received from tracker */
