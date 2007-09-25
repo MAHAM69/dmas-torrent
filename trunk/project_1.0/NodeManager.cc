@@ -46,6 +46,20 @@ void NodeManager::initialize()
 
 void NodeManager::handleMessage(cMessage *msg)
 {
+#ifdef DEBUG
+    ev << "NodeManager::handleMessage   message name: " << ((msg != NULL) ? msg->name() : "NULL") << endl;
+#endif
+    if ( msg == NULL ) return;
+    if ( strcmp( msg->name(), MSG_TRACKER_RESPONSE ) == 0 )
+    {
+	receiveTrackerResponse( msg );
+    }
+    else
+    {
+	// Unknown message.
+	delete msg;
+    }
+/*    
     // The handleMessage() method is called whenever a message arrives
     // at the module. Here, we just send it to the other module, through
     // gate `out'. 
@@ -74,6 +88,7 @@ void NodeManager::handleMessage(cMessage *msg)
 		
 		delete myMsg;				
 	}
+*/	
 }
 
 
@@ -100,4 +115,39 @@ void NodeManager::handshakeToPeers()
 			
 		send(handshakeMessage,"connectionManagerOut");
 	}
+}
+
+/**
+ *
+ */
+void NodeManager::receiveTrackerResponse( cMessage *msg )
+{
+    TrackerResponse* trackerResponse = NULL;
+    trackerResponse = check_and_cast<TrackerResponse *>(msg);
+    if ( trackerResponse == NULL ) return;
+    ostringstream out;
+    string cvs = "";
+    out << trackerResponse->getCvs();
+    cvs = out.str();
+    
+    string value = "";
+    string rest  = "";
+    int i = 0;
+    while ( cvs != "" )
+    {
+	parse( cvs, value, rest );
+#ifdef DEBUG
+    ev << "i=" << i << "   value: " << value << endl;
+#endif
+	char ID[20];
+	strcpy( ID, value.c_str() );
+	i = (i+1) % 5;
+	if ( i == 0 )
+	{
+	    peersList.push_back( ID );
+	}
+
+	cvs = rest;
+    }
+    handshakeToPeers();
 }
