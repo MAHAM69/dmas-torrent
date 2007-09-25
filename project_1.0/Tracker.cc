@@ -25,12 +25,12 @@ void Tracker::handleMessage(cMessage* msg)
     if ( msg == NULL ) return;
     if ( strcmp( msg->name(), MSG_GET ) == 0 )
     {
-        ev << "Received GET message from " << endl;
-        
         RequestMessage* myMsg  = NULL;
         myMsg = check_and_cast<RequestMessage *>(msg);
 
-	ev << "Event " << myMsg->getEvent() << endl;
+#ifdef DEBUG
+	ev << "Event: " << myMsg->getEvent() << endl;
+#endif
 
         if (strcmp(myMsg->getEvent(), "stopped")==0)
         {
@@ -111,10 +111,6 @@ void Tracker::response( const char* ID )
     string s = "";
     for (int i=0; i < min( peersCounter, NO_PEERS ); i++)
     {
-#ifdef DEBUG
-	cout << "peers[" << i << "].ID = " << peers[i].getID() << endl;
-	ev   << "peers[" << i << "].ID = " << peers[i].getID() << endl;
-#endif
 	if ( peers[i].getLeft() > 0.0 )
 	    leechers++;
 	else 

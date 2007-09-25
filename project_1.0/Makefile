@@ -320,8 +320,10 @@ Node.o: Node.cc \
   Switch.h \
   HandshakeGenerator.h \
   NodeAddress.h \
+  CVSParser.h \
   NodeHandshakeMessage_m.h \
   RequestMessage_m.h \
+  TrackerResponse_m.h \
   commons.h \
   PeersHandshake.h \
   NodeMessage_m.h \
@@ -332,8 +334,7 @@ Node.o: Node.cc \
   ChokeRandom.h \
   SingleActive.h \
   NumberTools.h \
-  Choke.h \
-  TrackerResponse_m.h
+  Choke.h
 NodeHandshakeMessage_m.o: NodeHandshakeMessage_m.cc \
   NodeHandshakeMessage_m.h \
   PeersHandshake.h \
@@ -342,8 +343,10 @@ NodeManager.o: NodeManager.cc \
   NodeManager.h \
   HandshakeGenerator.h \
   NodeAddress.h \
+  CVSParser.h \
   NodeHandshakeMessage_m.h \
   RequestMessage_m.h \
+  TrackerResponse_m.h \
   commons.h \
   PeersHandshake.h \
   NodeMessage_m.h

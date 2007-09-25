@@ -5,7 +5,7 @@ Define_Module(Switch);
 void Switch::handleMessage(cMessage *msg)
 {
 #ifdef DEBUG
-	ev << "handleMessage    message name: " << ((msg != NULL) ? msg->name() : "NULL") << endl;
+	ev << "Switch::handleMessage    message name: " << ((msg != NULL) ? msg->name() : "NULL") << endl;
 #endif
 
 	if ( strcmp( msg->name(), MSG_GET ) == 0)

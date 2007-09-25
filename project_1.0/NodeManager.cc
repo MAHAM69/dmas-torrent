@@ -53,6 +53,7 @@ void NodeManager::handleMessage(cMessage *msg)
     if ( strcmp( msg->name(), MSG_TRACKER_RESPONSE ) == 0 )
     {
 	receiveTrackerResponse( msg );
+	delete msg;
     }
     else
     {
@@ -133,20 +134,25 @@ void NodeManager::receiveTrackerResponse( cMessage *msg )
     string value = "";
     string rest  = "";
     int i = 0;
+    peersList.clear();
     while ( cvs != "" )
     {
+	value = "";
 	parse( cvs, value, rest );
-#ifdef DEBUG
-    ev << "i=" << i << "   value: " << value << endl;
-#endif
+	cout << cvs << " | " << value << " | " << rest << endl;
 	char ID[20];
-	strcpy( ID, value.c_str() );
-	i = (i+1) % 5;
 	if ( i == 0 )
 	{
-	    peersList.push_back( ID );
+	    strcpy( ID, value.c_str() );
+#ifdef DEBUG
+            ev << "i=" << i << "   ID: " << ID << endl;
+#endif
+	    if ( strcmp( peerName, ID ) != 0 )
+	    {
+		peersList.push_back( ID );
+	    }
 	}
-
+	i = (i+1) % 5;
 	cvs = rest;
     }
     handshakeToPeers();
