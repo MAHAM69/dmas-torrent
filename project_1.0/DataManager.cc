@@ -144,11 +144,23 @@ void DataManager::handleMessage(cMessage *msg)
 					char* peerOfInterest = findPeer(whichBlock);
 					
 					// generate request message
-					char* payload=this->requestIntToChar(10,10,10);
+					unsigned int offset = blocks[whichBlock].getOffset();
+					unsigned int requestedLength = 0;
 					
-					int* valuesBack = this->requestCharToInt(payload);
+					// specifies how many kB left to finish downloading of a torrent
+					int bytesLeft = blocks[whichBlock].getBlockSize() - blocks[whichBlock].getOffset() ;
 					
-					//testing auxillary functions
+					if(bytesLeft > 16)
+						requestedLength = 16;
+					else
+						requestedLength = bytesLeft;
+					
+					char* payload=this->requestIntToChar(whichBlock,offset,requestedLength);
+					
+					//generateRequestMessage;
+					
+					PeerToPeerMessage* requestMessage= generateRequestMessage(peerOfInterest,peerName,payload);
+					send(requestMessage,"connectionManagerOut");
 					
 				}
 				
@@ -293,8 +305,27 @@ int* DataManager::requestCharToInt(char* payload)
 char* DataManager::findPeer(int block)
 {
 	char searchedPeer[20];
+	//peers that posseses requested block
+	vector<char*> potentialPeers;
 	
+	for(unsigned int i=0; i < peersBitfields.size(); i++)
+	{
+		//for each known bitfield check if it has requested block		
+		if(peersBitfields[i].getBitfield()[block] == 'y')
+		{
+			potentialPeers.push_back( peersBitfields[i].getPeerName() );
+		}
+	}	
 	
-	
-	return searchedPeer;		
+	if(potentialPeers.size() > 0)
+	{
+		int size = potentialPeers.size() ; 
+		int randomPeer = rand() % potentialPeers.size() ;
+		strcpy(searchedPeer, potentialPeers[randomPeer] );
+		return searchedPeer;
+	}
+	else
+	{
+		return NULL;
+	}					
 }
