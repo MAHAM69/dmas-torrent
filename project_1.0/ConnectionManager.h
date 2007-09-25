@@ -11,7 +11,7 @@
 #include "commons.h"
 #include "P2PMessage_m.h"
 #include "PeerMessageGenerator.h"
-#include "ChokeRandom.h"
+#include "RequestMessage_m.h"
 
 using namespace std;
 
@@ -32,7 +32,10 @@ class ConnectionManager:    public cSimpleModule,
 		
 		// list of peers from which handshake was received and 
 		vector<PeersConnected> connectionsList;
+
 		
+		vector<NodeMessage*>	requestList;
+
 		// list of active connections		
 		ActiveConnections* activeConnections;
 
@@ -59,6 +62,10 @@ class ConnectionManager:    public cSimpleModule,
 		void msgHave(NodeMessage* myMsg);
 		void msgRequest(NodeMessage* myMsg);
 
+		void msgScheduledChoke(NodeMessage* myMsg);
+		void addRequest(NodeMessage* newMsg) { requestList.push_back(newMsg); }
+
+		void chokeRandom();		
 	protected:
 		virtual void initialize();
 		virtual void handleMessage(cMessage *msg);
