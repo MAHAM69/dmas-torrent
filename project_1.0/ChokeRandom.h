@@ -1,17 +1,17 @@
 #ifndef CHOKE_RANDOM
 #define CHOKE_RANDOM
 
-#include "NumberTools.h"
+#include "Choke.h"
 
 //probability, that request will be accepted - in %
 const int probAccept = 50;
 
 class ChokeRandom :
-		    public cNumberTools
+		    public Choke
 {
     public:
 	ChokeRandom(){};
-	~ChokeRandom(){};
+	virtual ~ChokeRandom(){};
 	
 	bool choked();
 
