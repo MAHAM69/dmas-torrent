@@ -5,7 +5,7 @@ Define_Module(Switch);
 void Switch::handleMessage(cMessage *msg)
 {
 #ifdef DEBUG
-	ev << "Switch::handleMessage    message name: " << ((msg != NULL) ? msg->name() : "NULL") << endl;
+	ev << "handleMessage    message name: " << ((msg != NULL) ? msg->name() : "NULL") << endl;
 #endif
 
 	if ( strcmp( msg->name(), MSG_GET ) == 0)
@@ -24,6 +24,7 @@ void Switch::handleMessage(cMessage *msg)
 
 	    // check which gate corresponds to the receiver
 	    int port = nodeAddress(dest);
+	    cout << "port = " << port << endl;
 	    send( msg, "out", port );
 	    
 	}
@@ -36,8 +37,8 @@ void Switch::handleMessage(cMessage *msg)
 		const char* dest = myMsg->getDestination();
 		
 		char bubel[50];
-		
-		strcpy(bubel, "sending to\n");
+		strcpy(bubel,myMsg->fullName());
+		strcat(bubel, "\nsending to\n");
 		strcat(bubel, myMsg->getDestination());
 		
 		bubble(bubel);
