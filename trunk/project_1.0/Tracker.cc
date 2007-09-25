@@ -19,7 +19,7 @@ void Tracker::initialize()
 void Tracker::handleMessage(cMessage* msg)
 {
 #ifdef DEBUG
-	ev << "handleMessage   message name: " << ((msg != NULL) ? msg->name() : "NULL") << endl;
+	ev << "Tracker::handleMessage   message name: " << ((msg != NULL) ? msg->name() : "NULL") << endl;
 #endif
 
     if ( msg == NULL ) return;
@@ -57,12 +57,6 @@ void Tracker::handleMessage(cMessage* msg)
 
 void Tracker::addPeer( const double ip, const int port, const double left, const char* ID, const char* hash_info )
 {
-    ev << "ip = " << ip << endl;
-    ev << "port= " << port << endl;
-    ev << "left = " << left << endl;
-    ev << "ID = " << ID << endl;
-    ev << "hash_info = " << hash_info << endl;
-    
     bool exists=false;
     for(int i=0;i<peersCounter;i++)
 	if (ip == peers[i].getIp())
@@ -107,28 +101,33 @@ void Tracker::response( const char* ID )
     int port = nodeAddress(ID);
     int seeders = 0;
     int leechers = 0;
-    PeerBean peerList[NO_PEERS]; //list of peers to be sent in response
 
 #ifdef DEBUG
     ev << "Response to " << ID << endl;
     ev << "Peers counter: " << peersCounter << endl;
 #endif
-    
+
+    ostringstream out;
+    string s = "";
     for (int i=0; i < min( peersCounter, NO_PEERS ); i++)
     {
 #ifdef DEBUG
 	cout << "peers[" << i << "].ID = " << peers[i].getID() << endl;
-	ev << "peers[" << i << "] = " << peers[i].getID() << endl;
+	ev   << "peers[" << i << "].ID = " << peers[i].getID() << endl;
 #endif
 	if ( peers[i].getLeft() > 0.0 )
 	    leechers++;
 	else 
 	    seeders++;
-	peerList[i] = peers[i]; //only first NO_PEERS peers on the tracker's list will be added to the response list
+	out << peers[i].getID() << ";";
+	out << peers[i].getHash() << ";";
+	out << peers[i].getIp() << ";";
+	out << peers[i].getPort() << ";";
+	out << peers[i].getLeft() << ";";
     }
+    s = out.str();
 
 #ifdef DEBUG
-ev << "min: " << min(peersCounter, NO_PEERS) << endl;
 ev << "Seeders: " << seeders << endl;
 ev << "Leechers: " << leechers << endl;
 #endif
@@ -138,7 +137,7 @@ ev << "Leechers: " << leechers << endl;
     responseMsg->setInterval( REQ_INTERVAL );
     responseMsg->setNo_seeders( seeders );
     responseMsg->setNo_leechers( leechers );
-    responseMsg->setPeers( min(peersCounter, NO_PEERS)-1, peerList );
+    responseMsg->setCvs( s.c_str() );
 
     send(responseMsg, "trackerOut");
 }

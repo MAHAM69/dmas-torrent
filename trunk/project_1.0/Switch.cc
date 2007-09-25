@@ -27,8 +27,6 @@ void Switch::handleMessage(cMessage *msg)
 	    cout << "port = " << port << endl;
 	    send( msg, "out", port );
 	    
-//	    delete msg;
-//	    return;
 	}
 	else
 	{
