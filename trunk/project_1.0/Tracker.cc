@@ -1,10 +1,6 @@
 #include "Tracker.h"
 
 #include "commons.h"
-#include "TrackerResponse_m.h"
-#include "RequestMessage_m.h"
-#include "NodeAddress.h"
-#include "omnetpp.h"
 
 Define_Module(Tracker);
 
@@ -32,20 +28,21 @@ void Tracker::handleMessage(cMessage* msg)
 	ev << "Event: " << myMsg->getEvent() << endl;
 #endif
 
+	// if stopped then delete
         if (strcmp(myMsg->getEvent(), "stopped")==0)
         {
-    	    delPeer(myMsg->getID());
+	    delPeer(myMsg->getID());
     	}
         else
         {
-	    if (strcmp(myMsg->getEvent(), "started")==0)
-	    {
-		addPeer(    myMsg->getIp(), 
-			    myMsg->getPort(), 
-			    myMsg->getLeft(),
-			    myMsg->getID(),
-			    myMsg->getInfo_hash() );
-	    }
+    	    // if started then delete at first
+	    delPeer(myMsg->getID());
+	    // and add new peer
+	    addPeer(    myMsg->getIp(), 
+			myMsg->getPort(), 
+			myMsg->getLeft(),
+			myMsg->getID(),
+			myMsg->getInfo_hash() );
 	    response( myMsg->getID() );
 	}
 	delete msg;
@@ -107,7 +104,6 @@ void Tracker::response( const char* ID )
     ev << "Peers counter: " << peersCounter << endl;
 #endif
 
-    ostringstream out;
     string s = "";
     for (int i=0; i < min( peersCounter, NO_PEERS ); i++)
     {
@@ -115,13 +111,17 @@ void Tracker::response( const char* ID )
 	    leechers++;
 	else 
 	    seeders++;
-	out << peers[i].getID() << ";";
-	out << peers[i].getHash() << ";";
-	out << peers[i].getIp() << ";";
-	out << peers[i].getPort() << ";";
-	out << peers[i].getLeft() << ";";
+	oss << peers[i].getID() << ";";
+	oss << peers[i].getHash() << ";";
+	oss << peers[i].getIp() << ";";
+	oss << peers[i].getPort() << ";";
+	oss << peers[i].getLeft() << ";";
     }
-    s = out.str();
+//    s = oss.str();
+//    s << oss<< flush;
+    s = oss.str();
+    oss.str("");
+    cout << "Tracker: " << s << endl;
 
 #ifdef DEBUG
 ev << "Seeders: " << seeders << endl;

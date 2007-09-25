@@ -321,6 +321,7 @@ Node.o: Node.cc \
   HandshakeGenerator.h \
   NodeAddress.h \
   CVSParser.h \
+  StringConvert.h \
   NodeHandshakeMessage_m.h \
   RequestMessage_m.h \
   TrackerResponse_m.h \
@@ -344,6 +345,7 @@ NodeManager.o: NodeManager.cc \
   HandshakeGenerator.h \
   NodeAddress.h \
   CVSParser.h \
+  StringConvert.h \
   NodeHandshakeMessage_m.h \
   RequestMessage_m.h \
   TrackerResponse_m.h \
@@ -388,11 +390,12 @@ Switch_n.o: Switch_n.cc
 Tracker.o: Tracker.cc \
   Tracker.h \
   commons.h \
+  PeerBean.h \
+  NodeAddress.h \
+  CVSParser.h \
+  StringConvert.h \
   TrackerResponse_m.h \
   RequestMessage_m.h \
-  NodeAddress.h \
-  PeerBean.h \
-  CVSParser.h \
   NodeMessage_m.h
 Tracker_n.o: Tracker_n.cc
 TrackerResponse_m.o: TrackerResponse_m.cc \

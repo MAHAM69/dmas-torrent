@@ -6,6 +6,7 @@
 #include "PeerBean.h"
 #include "NodeAddress.h"
 #include "CVSParser.h"
+#include "StringConvert.h"
 #include "commons.h"
 #include "TrackerResponse_m.h"
 #include "RequestMessage_m.h"
@@ -14,7 +15,8 @@ using namespace std;
 
 class Tracker : public cSimpleModule,
 		public NodeAddress,
-	        public CVSParser
+	        public CVSParser,
+	        public StringConvert
 {
     private:
 	int ID;
