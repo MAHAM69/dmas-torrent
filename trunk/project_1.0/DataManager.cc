@@ -7,11 +7,7 @@ void DataManager::initialize()
 {
 
 	// initialize randomization	
-	srand((unsigned)time(0) + id()); 
-	
-
-	// initialize randomization	
-	srand((unsigned)time(0) + id()); 
+	srand((unsigned)time(0) + id()); 	
 
 	connectionEstablished = false;
 	strcpy(peerName, par("peer_name"));
