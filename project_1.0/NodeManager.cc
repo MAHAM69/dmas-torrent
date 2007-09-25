@@ -49,12 +49,28 @@ void NodeManager::handleMessage(cMessage *msg)
     // The handleMessage() method is called whenever a message arrives
     // at the module. Here, we just send it to the other module, through
     // gate `out'. 
-	
+	/*
 	NodeHandshakeMessage *myMsg = NULL;
 	myMsg = check_and_cast<NodeHandshakeMessage *>(msg);
+	*/
+	NodeMessage* myMsg = NULL;
+	myMsg = check_and_cast<NodeMessage *>(msg);
 	if(myMsg != NULL)
 	{
+		// examplary!! initialize handshake; for testing purposes only; here should be triggered reading peersList from tracker
+		// and only after thath handshake
 		
+		
+		peersList.push_back("node2");
+		peersList.push_back("node3");
+		peersList.push_back("node4");
+		
+		int isNode1 = strcmp(peerName,"node1");
+		
+		// if is node1 then send handshake 
+		if(isNode1 == 0){
+			handshakeToPeers();
+		}	
 	}
 }
 

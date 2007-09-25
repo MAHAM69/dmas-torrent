@@ -144,6 +144,8 @@ void DataManager::handleMessage(cMessage *msg)
 					char* peerOfInterest = findPeer(whichBlock);
 					
 					// generate request message
+					SingleBlock seekedBlock = blocks[whichBlock];
+					unsigned int ala = seekedBlock.getOffset();
 					unsigned int offset = blocks[whichBlock].getOffset();
 					unsigned int requestedLength = 0;
 					
